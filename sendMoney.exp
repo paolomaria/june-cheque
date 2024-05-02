@@ -1,0 +1,31 @@
+#!/usr/bin/expect -f
+
+if {[llength $argv] != 4} {
+# We give a message so the user know our syntax:
+puts "usage: sendMoney.exp <secret identifier> <passwrod> <amount> <receiver>"
+exit 1
+}
+
+# Now we set variables in expect, note: [lrange $argv 0 0 =$1 the first parameter, and so on.
+set username [lrange $argv 0 0]
+set password [lrange $argv 1 1]
+set amount [lrange $argv 2 2]
+set receiver [lrange $argv 3 3]
+
+set timeout 60
+spawn silkaj money transfer -a $amount -r "$receiver"
+match_max 100000
+
+expect "Please enter your Scrypt Salt (Secret identifier):"
+send -- "$username\r"
+
+expect "Please enter your Scrypt password (masked):"
+send -- "$password\r"
+
+expect "Do you confirm sending this transaction?"
+send -- "y\r"
+
+# send blank line (\r) to make sure we get back to cli
+send -- "\r"
+#We have gave our "program" and now we expect that the remote server close the connection:
+expect eof

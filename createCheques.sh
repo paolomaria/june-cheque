@@ -1,0 +1,148 @@
+#!/bin/bash
+set -e
+
+echo 'Checking presence of the required shell programs (openssl, python3, expect, silkaj)...'
+if ! [ -x "$(command -v openssl)" ]; then
+    echo 'Error: openssl is not present on your system. Please install it and run this script again.'
+    exit 1
+fi
+if ! [ -x "$(command -v python3)" ]; then
+    echo 'Error: python3 is not present on your system. Please install it and run this script again.'
+    exit 1
+fi
+if ! [ -x "$(command -v expect)" ]; then
+    echo 'Error: expect is not present on your system. Please install it and run this script again.'
+    exit 1
+fi
+if ! [ -x "$(command -v silkaj)" ]; then
+    echo 'Error: silkaj is not present on your system. Please install it and run this script again.'
+    exit 1
+fi
+
+amount=none
+number=none
+simulate=0
+outputFile="none"
+
+now=`date +"%d/%m/%Y"`
+
+function show_usage {
+  echo "Usage: createCheques.sh -n <number of cheques> -a <amount of each cheques> [-s] -o <output file>"
+  echo "    -s: simulate only. Don't tranfer any money."
+}
+
+while getopts "ha:n:so:" opt; do
+  case "$opt" in
+    h)
+	  show_usage
+      exit 0
+      ;;
+    n)  number=$OPTARG
+      ;;
+    a)  amount=$OPTARG
+      ;;
+    o)  outputFile=$OPTARG
+      ;;
+    s)  simulate=1
+      ;;
+  esac
+done
+
+if [ $amount == "none" -o $number == "none" ]; then
+	show_usage
+	exit 1
+fi
+
+if [ $outputFile == "none" ]; then
+	show_usage
+	exit 1
+fi
+
+if ! [[ "$amount" =~ ^[1-9][0-9]*$ ]]; then
+	echo "Amount must be a positive number"
+	exit 1
+fi
+
+if ! [[ "$number" =~ ^[1-9][0-9]*$ ]]; then
+	echo "Number of cheques must be a positive number"
+	exit 1
+fi
+
+if [ $amount -gt 100 ]; then
+	echo "Amount can be maximal 100"
+	exit 1
+fi
+
+if [ $number -gt 10 ]; then
+	echo "Number of cheques can be maximal 10"
+	exit 1
+fi
+
+if [ -f $outputFile ]; then
+	echo "The file $outputFile already exists"
+	exit 1
+fi
+
+> $outputFile
+chmod 600 $outputFile
+
+totalAmount=$(( $amount * $number ))
+
+read -sp 'Secret identifier: ' secretId
+echo
+read -sp 'Password: ' secretPw
+echo
+
+owners_pubkey=`python3 create_public_key.py "$secretId" "$secretPw"`
+owners_lookup=`silkaj  wot lookup $owners_pubkey`
+
+#echo "$owners_lookup"
+
+ownersPseudo=`echo "$owners_lookup" | awk -v d="" '{s=(NR==1?s:s d)$0}END{print s}'| awk -F " " '{print $NF}'`
+
+if [ $simulate -ne 1 ]; then
+	echo "IMPORTANT: the amount of $totalAmount Junes will be tranfered from the following accout:"
+	echo "    Pseudo: $ownersPseudo"
+	echo "    Public Key: $owners_pubkey"
+	echo "The secret identifier and password will be stored in the file $outputFile. If you loose this file the money will be lost"
+	read -p 'Proceed (Y/N): ' proceed
+	echo
+	if [ "$proceed" != "Y" ]; then
+		echo "Transaction has been stopped by the user"
+		rm $outputFile
+		exit 1
+	fi
+fi
+
+
+name=`echo "${ownersPseudo}_$$"`
+
+
+for (( i = 0 ; $i < $number; i = $i + 1)) ; do
+	if [ $i -gt 0 ]; then
+		echo "          ----------" >> $outputFile
+		echo >> $outputFile
+	fi
+	userpass=`openssl rand -base64 6`
+	passFormatted=`echo $userpass | sed -E "s/(^....)/\1-/g"`
+	
+	pubkey=`python3 create_public_key.py "${name}_$i" "$passFormatted"`
+	echo "Ã©mis par $ownersPseudo ($owners_pubkey) le $now" >> $outputFile
+	echo "Pour: ___________________________, le __/__/____" >> $outputFile
+	echo "  Identifiant secret: ${name}_$i" >> $outputFile
+	echo "  Mot de passe: $passFormatted" >> $outputFile
+	echo "  (Public Key: $pubkey)" >> $outputFile
+
+	if [ $simulate -ne 1 ]; then
+		./sendMoney.exp "$secretId" "$secretPw" "$amount" "$pubkey"
+		echo "  Valeur: $amount June." >> $outputFile
+		echo "Pour encaisser ce chèque enregistrez-vous avec l'identifiant secret et le mot de passe en haut et transférez les $amount June vers votre compte. Une fois transférées, le chèque peut être détruit." >> $outputFile
+	else
+		echo "  Valeur: sans valeur." >> $outputFile
+	fi
+
+	echo >> $outputFile
+
+done
+
+
