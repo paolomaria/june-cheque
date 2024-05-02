@@ -34,5 +34,22 @@ Usage: createCheques.sh -n <number of cheques> -a <amount of each cheques> [-s] 
 
 If you want to create 10 cheques of 5 June each, just call:
 ```
-createCheques.sh -n 10 -a 5 -o myFirstCheck.txt
+createCheques.sh -n 10 -a 5 -o myFirstCheque.txt
+```
+
+The cheques are currently in french.
+
+## Ideas
+
+ - multi language support
+ - create a pdf instead of a txt file
+ 
+ 
+## Donations
+
+Every donation is very welcome. You can transfer some Junes to the following public key: `Bv8hAiQAvKWUhRgGtYBzEV2ig8ARqUvXHkD5wq4XrWiN:J1s`
+
+Or in a shell, for example ij order to tranfer 20 June:
+```
+silkaj money transfer -r "Bv8hAiQAvKWUhRgGtYBzEV2ig8ARqUvXHkD5wq4XrWiN:J1s" -a 20
 ```
