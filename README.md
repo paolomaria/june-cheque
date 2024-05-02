@@ -39,6 +39,10 @@ createCheques.sh -n 10 -a 5 -o myFirstCheque.txt
 
 The cheques are currently in french.
 
+## Known Limitations
+
+ - You can only create cheques if you have a member account
+
 ## Ideas
 
  - multi language support
