@@ -1,20 +1,27 @@
 #!/bin/bash
 set -e
 
-echo 'Checking presence of the required shell programs (openssl, python3, expect, silkaj)...'
+function show_dep_text {
+	echo 'Checking presence of the required shell programs (openssl, python3, expect, silkaj)...'
+}
+
 if ! [ -x "$(command -v openssl)" ]; then
+	show_dep_text
     echo 'Error: openssl is not present on your system. Please install it and run this script again.'
     exit 1
 fi
 if ! [ -x "$(command -v python3)" ]; then
+	show_dep_text
     echo 'Error: python3 is not present on your system. Please install it and run this script again.'
     exit 1
 fi
 if ! [ -x "$(command -v expect)" ]; then
+	show_dep_text
     echo 'Error: expect is not present on your system. Please install it and run this script again.'
     exit 1
 fi
 if ! [ -x "$(command -v silkaj)" ]; then
+	show_dep_text
     echo 'Error: silkaj is not present on your system. Please install it and run this script again.'
     exit 1
 fi
@@ -23,15 +30,16 @@ amount=none
 number=none
 simulate=0
 outputFile="none"
+weblink="none"
 
 now=`date +"%d/%m/%Y"`
 
 function show_usage {
-  echo "Usage: createCheques.sh -n <number of cheques> -a <amount of each cheques> [-s] -o <output file>"
+  echo "Usage: createCheques.sh -n <number of cheques> -a <amount of each cheques> [-s] -o <output file> [-c <link to website running cesium or similar>]"
   echo "    -s: simulate only. Don't tranfer any money."
 }
 
-while getopts "ha:n:so:" opt; do
+while getopts "ha:n:so:c:" opt; do
   case "$opt" in
     h)
 	  show_usage
@@ -42,6 +50,8 @@ while getopts "ha:n:so:" opt; do
     a)  amount=$OPTARG
       ;;
     o)  outputFile=$OPTARG
+      ;;
+    c)  weblink=$OPTARG
       ;;
     s)  simulate=1
       ;;
@@ -116,7 +126,13 @@ fi
 
 
 name=`echo "${ownersPseudo}_$$"`
+name=`openssl rand -hex 2`
+ctr=$$
 
+webLinkHintText=""
+if [ $weblink != "none" ]; then
+	webLinkHintText="(par exemple via le site $weblink) "
+fi
 
 for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	if [ $i -gt 0 ]; then
@@ -126,20 +142,22 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	userpass=`openssl rand -base64 6`
 	passFormatted=`echo $userpass | sed -E "s/(^....)/\1-/g"`
 	
-	pubkey=`python3 create_public_key.py "${name}_$i" "$passFormatted"`
+	ctr=$(($ctr + $i))
+	identifiant="${name}_$ctr"
+	pubkey=`python3 create_public_key.py "${identifiant}" "$passFormatted"`
 	echo "Ã©mis par $ownersPseudo ($owners_pubkey) le $now" >> $outputFile
 	echo "Pour: ___________________________, le __/__/____" >> $outputFile
-	echo "  Identifiant secret: ${name}_$i" >> $outputFile
+	echo "  Identifiant secret: ${identifiant}" >> $outputFile
 	echo "  Mot de passe: $passFormatted" >> $outputFile
-	echo "  (Public Key: $pubkey)" >> $outputFile
+#	echo "  (Public Key: $pubkey)" >> $outputFile
 
 	if [ $simulate -ne 1 ]; then
 		./sendMoney.exp "$secretId" "$secretPw" "$amount" "$pubkey"
 		echo "  Valeur: $amount June." >> $outputFile
-		echo "Pour encaisser ce chèque enregistrez-vous avec l'identifiant secret et le mot de passe en haut et transférez les $amount June vers votre compte. Une fois transférées, le chèque peut être détruit." >> $outputFile
 	else
 		echo "  Valeur: sans valeur." >> $outputFile
 	fi
+	echo "Pour encaisser ce chèque enregistrez-vous$webLinkHintText avec l'identifiant secret et le mot de passe en haut et transférez les $amount June vers votre compte. Une fois transférées, le chèque peut être détruit." >> $outputFile
 
 	echo >> $outputFile
 
