@@ -143,9 +143,9 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	passFormatted=`echo $userpass | sed -E "s/(^....)/\1-/g"`
 	
 	ctr=$(($ctr + $i))
-	identifiant="${name}_$ctr"
+	identifiant="${name}-$ctr"
 	pubkey=`python3 create_public_key.py "${identifiant}" "$passFormatted"`
-	echo "Ã©mis par $ownersPseudo ($owners_pubkey) le $now" >> $outputFile
+	echo "ÃƒÂ©mis par $ownersPseudo ($owners_pubkey) le $now" >> $outputFile
 	echo "Pour: ___________________________, le __/__/____" >> $outputFile
 	echo "  Identifiant secret: ${identifiant}" >> $outputFile
 	echo "  Mot de passe: $passFormatted" >> $outputFile
@@ -157,7 +157,7 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	else
 		echo "  Valeur: sans valeur." >> $outputFile
 	fi
-	echo "Pour encaisser ce chèque enregistrez-vous$webLinkHintText avec l'identifiant secret et le mot de passe en haut et transférez les $amount June vers votre compte. Une fois transférées, le chèque peut être détruit." >> $outputFile
+	echo "Pour encaisser ce chÃ¨que enregistrez-vous$webLinkHintText avec l'identifiant secret et le mot de passe en haut et transfÃ©rez les $amount June vers votre compte. Une fois transfÃ©rÃ©es, le chÃ¨que peut Ãªtre dÃ©truit." >> $outputFile
 
 	echo >> $outputFile
 
