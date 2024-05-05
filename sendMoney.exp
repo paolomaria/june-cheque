@@ -1,8 +1,8 @@
 #!/usr/bin/expect -f
 
-if {[llength $argv] != 4} {
+if {[llength $argv] != 5} {
 # We give a message so the user know our syntax:
-puts "usage: sendMoney.exp <secret identifier> <passwrod> <amount> <receiver>"
+puts "usage: sendMoney.exp <secret identifier> <passwrod> <amount> <receiver> <comment>"
 exit 1
 }
 
@@ -11,9 +11,10 @@ set username [lrange $argv 0 0]
 set password [lrange $argv 1 1]
 set amount [lrange $argv 2 2]
 set receiver [lrange $argv 3 3]
+set comment [lrange $argv 4 4]
 
 set timeout 60
-spawn silkaj money transfer -a $amount -r "$receiver"
+spawn silkaj money transfer -a $amount -r "$receiver" -c "$comment"
 match_max 100000
 
 expect "Please enter your Scrypt Salt (Secret identifier):"
@@ -23,7 +24,7 @@ expect "Please enter your Scrypt password (masked):"
 send -- "$password\r"
 
 expect "Do you confirm sending this transaction?"
-send -- "y\r"
+send -- "Y\r"
 
 # send blank line (\r) to make sure we get back to cli
 send -- "\r"

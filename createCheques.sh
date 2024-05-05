@@ -141,18 +141,20 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	fi
 	userpass=`openssl rand -base64 6`
 	passFormatted=`echo $userpass | sed -E "s/(^....)/\1-/g"`
+	chequeNumber=`openssl rand -base64 20`
 	
 	ctr=$(($ctr + $i))
 	identifiant="${name}-$ctr"
 	pubkey=`python3 create_public_key.py "${identifiant}" "$passFormatted"`
-	echo "Ã©mis par $ownersPseudo ($owners_pubkey) le $now" >> $outputFile
+	echo "Émis par $ownersPseudo ($owners_pubkey) le $now" >> $outputFile
 	echo "Pour: ___________________________, le __/__/____" >> $outputFile
+	echo "  Numéro du chèque: ${chequeNumber}" >> $outputFile
 	echo "  Identifiant secret: ${identifiant}" >> $outputFile
 	echo "  Mot de passe: $passFormatted" >> $outputFile
-#	echo "  (Public Key: $pubkey)" >> $outputFile
+	echo "  (Clé publique: $pubkey)" >> $outputFile
 
 	if [ $simulate -ne 1 ]; then
-		./sendMoney.exp "$secretId" "$secretPw" "$amount" "$pubkey"
+		./sendMoney.exp "$secretId" "$secretPw" "$amount" "$pubkey" "cheque  $chequeNumber"
 		echo "  Valeur: $amount June." >> $outputFile
 	else
 		echo "  Valeur: sans valeur." >> $outputFile
@@ -160,7 +162,10 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	echo "Pour encaisser ce chèque enregistrez-vous$webLinkHintText avec l'identifiant secret et le mot de passe en haut et transférez les $amount June vers votre compte. Une fois transférées, le chèque peut être détruit." >> $outputFile
 
 	echo >> $outputFile
-
+	
 done
+
+echo
+echo "The file '$outputFile' has been successfully created. It contains the $number cheque(s). Keep this file until the money has been cashed or the money will be lost."
 
 
