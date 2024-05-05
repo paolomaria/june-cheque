@@ -16,7 +16,7 @@ The packages which provide the following binaries have to be installed:
 
  - openssl
  - python3
- - expect
+ - srm
  - silkaj
  
 ## How to use

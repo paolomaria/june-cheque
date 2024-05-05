@@ -2,7 +2,7 @@
 set -e
 
 function show_dep_text {
-	echo 'Checking presence of the required shell programs (openssl, python3, expect, silkaj)...'
+	echo 'Checking presence of the required shell programs (openssl, python3, srm, silkaj)...'
 }
 
 if ! [ -x "$(command -v openssl)" ]; then
@@ -15,9 +15,9 @@ if ! [ -x "$(command -v python3)" ]; then
     echo 'Error: python3 is not present on your system. Please install it and run this script again.'
     exit 1
 fi
-if ! [ -x "$(command -v expect)" ]; then
+if ! [ -x "$(command -v srm)" ]; then
 	show_dep_text
-    echo 'Error: expect is not present on your system. Please install it and run this script again.'
+    echo 'Error: srm is not present on your system. Please install it and run this script again.'
     exit 1
 fi
 if ! [ -x "$(command -v silkaj)" ]; then
@@ -154,7 +154,11 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	echo "  (Clé publique: $pubkey)" >> $outputFile
 
 	if [ $simulate -ne 1 ]; then
-		./sendMoney.exp "$secretId" "$secretPw" "$amount" "$pubkey" "cheque  $chequeNumber"
+		tfile=$(mktemp  /tmp/.XXXXXXXXX)
+		chmod 600 $tfile
+		python3 createKeyFile.py "$secretId" "$secretPw" "$tfile"
+		silkaj -af --file "$tfile" money transfer -a $amount -r "$pubkey" -c "cheque  $chequeNumber" -y
+		srm $tfile
 		echo "  Valeur: $amount June." >> $outputFile
 	else
 		echo "  Valeur: sans valeur." >> $outputFile
