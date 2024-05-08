@@ -53,7 +53,7 @@ The cheques are currently in french.
 
 Every donation is very welcome. You can transfer some Junes to the following public key: `Bv8hAiQAvKWUhRgGtYBzEV2ig8ARqUvXHkD5wq4XrWiN:J1s`
 
-Or in a shell, for example in order to tranfer 20 June:
+Or in a shell, for example in order to transfer 20 June:
 ```
 silkaj money transfer -r "Bv8hAiQAvKWUhRgGtYBzEV2ig8ARqUvXHkD5wq4XrWiN:J1s" -a 20
 ```
