@@ -4,7 +4,7 @@ A CLI in order to create cheque for the June currency (see monnaie-libre.fr).
 
 ## Description
 
-One of the maim disadvantage of the June is the fact that you need either a computer or a smartphone in order to execute a transaction. This may be inconvenient for people which do not have a smartphone.
+One of the main disadvantage of the June is the fact that you need either a computer or a smartphone in order to execute a transaction. This may be inconvenient for people which do not have a smartphone.
 
 With this CLI you can create June cheques which then can be printed out as paper and given to the person who you want to send some June. The credentials in order to get paid are written on the cheque.
 
