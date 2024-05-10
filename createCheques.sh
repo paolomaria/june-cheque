@@ -141,14 +141,12 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	fi
 	userpass=`openssl rand -base64 6`
 	passFormatted=`echo $userpass | sed -E "s/(^....)/\1-/g"`
-	chequeNumber=`openssl rand -base64 20`
 	
-	ctr=$(($ctr + $i))
+	ctr=$(($ctr + 1))
 	identifiant="${name}-$ctr"
 	pubkey=`python3 create_public_key.py "${identifiant}" "$passFormatted"`
 	echo "Émis par $ownersPseudo ($owners_pubkey) le $now" >> $outputFile
 	echo "Pour: ___________________________, le __/__/____" >> $outputFile
-	echo "  Numéro du chèque: ${chequeNumber}" >> $outputFile
 	echo "  Identifiant secret: ${identifiant}" >> $outputFile
 	echo "  Mot de passe: $passFormatted" >> $outputFile
 	echo "  (Clé publique: $pubkey)" >> $outputFile
@@ -157,7 +155,7 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 		tfile=$(mktemp  /tmp/.XXXXXXXXX)
 		chmod 600 $tfile
 		python3 createKeyFile.py "$secretId" "$secretPw" "$tfile"
-		silkaj -af --file "$tfile" money transfer -a $amount -r "$pubkey" -c "cheque  $chequeNumber" -y
+		silkaj -af --file "$tfile" money transfer -a $amount -r "$pubkey" -c "cheque  $pubkey" -y
 		srm $tfile
 		echo "  Valeur: $amount June." >> $outputFile
 	else
