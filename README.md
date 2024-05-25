@@ -1,3 +1,5 @@
+![June Cheque logo](https://github.com/paolomaria/june-cheque-app/raw/main/www/img/logo_144px.png)
+
 # june-cheque
 
 A CLI in order to create cheque for the June currency (see monnaie-libre.fr).
@@ -18,6 +20,7 @@ The packages which provide the following binaries have to be installed:
  - python3
  - srm
  - silkaj
+ - [jaklis]
  
 ## How to use
 

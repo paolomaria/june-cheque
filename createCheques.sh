@@ -5,6 +5,8 @@ function show_dep_text {
 	echo 'Checking presence of the required shell programs (openssl, python3, srm, silkaj)...'
 }
 
+addLogo=1
+
 if ! [ -x "$(command -v openssl)" ]; then
 	show_dep_text
     echo 'Error: openssl is not present on your system. Please install it and run this script again.'
@@ -24,6 +26,10 @@ if ! [ -x "$(command -v silkaj)" ]; then
 	show_dep_text
     echo 'Error: silkaj is not present on your system. Please install it and run this script again.'
     exit 1
+fi
+if ! [ -x "$(command -v jaklis)" ]; then
+    echo 'Notice: jaklis is not present on your system. No logo will be added to the check account.'
+	addLogo=0
 fi
 
 amount=none
@@ -150,8 +156,16 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	echo "  Identifiant secret: ${identifiant}" >> $outputFile
 	echo "  Mot de passe: $passFormatted" >> $outputFile
 	echo "  (Clé publique: $pubkey)" >> $outputFile
-
+	
 	if [ $simulate -ne 1 ]; then
+		if [ $addLogo -eq 1 ]; then
+			pubKeyFile=$(mktemp  /tmp/.XXXXXXXXX)
+			chmod 600 $pubKeyFile
+			python3 save_and_load_private_key_file_pubsec.py  ${identifiant} $passFormatted $pubKeyFile
+			jaklis -k $pubKeyFile  set -d "Cheque June émis le $now" -A logo.png
+			srm $pubKeyFile
+		fi
+
 		tfile=$(mktemp  /tmp/.XXXXXXXXX)
 		chmod 600 $tfile
 		python3 createKeyFile.py "$secretId" "$secretPw" "$tfile"
