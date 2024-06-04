@@ -111,7 +111,7 @@ echo
 
 owners_lookup_failed=0
 owners_pubkey=`python3 create_public_key.py "$secretId" "$secretPw"`
-owners_lookup=`silkaj  wot lookup $owners_pubkey > /dev/null` || owners_lookup_failed=1
+owners_lookup=`silkaj  wot lookup $owners_pubkey` || owners_lookup_failed=1
 
 #echo "$owners_lookup"
 
@@ -121,16 +121,21 @@ elif [ $hasJaklis -ne 1 ]; then
 	echo "No Pseudo found for address $owners_pubkey";
 	exit 1;
 else
-	noPrifleFound=0
+	noProfileFound=0
 	pubKeyFile=$(mktemp  /tmp/.XXXXXXXXX)
 	chmod 600 $pubKeyFile
 	python3 save_and_load_private_key_file_pubsec.py  $secretId $secretPw $pubKeyFile
-	profile=`jaklis -k $pubKeyFile  get` || noPrifleFound=1
+	profile=`jaklis -k $pubKeyFile  get` || noProfileFound=1
 	srm $pubKeyFile
-	if [ $noPrifleFound -ne 0 ]; then
+	if [ $noProfileFound -ne 0 ]; then
 		echo "Neither a Pseudo nor a title found for address $owners_pubkey";
 		exit 1;
 	fi
+	echo $profile | grep '"title"' || noProfileFound=1
+	if [ $noProfileFound -ne 0 ]; then
+		echo "Neither a Pseudo nor a title found for address $owners_pubkey";
+		exit 1;
+	fi	
 	ownersPseudo=`echo $profile | sed -E "s/.*\"title\": \"([^\"]*).*/\1/g"`
 	if [ "$profile" = "$ownersPseudo" ]; then
 		echo "Neither a Pseudo nor a title found for address $owners_pubkey";
