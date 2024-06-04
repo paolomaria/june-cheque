@@ -5,7 +5,7 @@ function show_dep_text {
 	echo 'Checking presence of the required shell programs (openssl, python3, srm, silkaj)...'
 }
 
-addLogo=1
+hasJaklis=1
 
 if ! [ -x "$(command -v openssl)" ]; then
 	show_dep_text
@@ -29,7 +29,7 @@ if ! [ -x "$(command -v silkaj)" ]; then
 fi
 if ! [ -x "$(command -v jaklis)" ]; then
     echo 'Notice: jaklis is not present on your system. No logo will be added to the check account.'
-	addLogo=0
+	hasJaklis=0
 fi
 
 amount=none
@@ -109,16 +109,39 @@ echo
 read -sp 'Password: ' secretPw
 echo
 
+owners_lookup_failed=0
 owners_pubkey=`python3 create_public_key.py "$secretId" "$secretPw"`
-owners_lookup=`silkaj  wot lookup $owners_pubkey`
+owners_lookup=`silkaj  wot lookup $owners_pubkey > /dev/null` || owners_lookup_failed=1
 
 #echo "$owners_lookup"
 
-ownersPseudo=`echo "$owners_lookup" | awk -v d="" '{s=(NR==1?s:s d)$0}END{print s}'| awk -F " " '{print $NF}'`
+if [ $owners_lookup_failed -ne 1 ]; then
+	ownersPseudo=`echo "$owners_lookup" | awk -v d="" '{s=(NR==1?s:s d)$0}END{print s}'| awk -F " " '{print $NF}'`
+elif [ $hasJaklis -ne 1 ]; then
+	echo "No Pseudo found for address $owners_pubkey";
+	exit 1;
+else
+	noPrifleFound=0
+	pubKeyFile=$(mktemp  /tmp/.XXXXXXXXX)
+	chmod 600 $pubKeyFile
+	python3 save_and_load_private_key_file_pubsec.py  $secretId $secretPw $pubKeyFile
+	profile=`jaklis -k $pubKeyFile  get` || noPrifleFound=1
+	srm $pubKeyFile
+	if [ $noPrifleFound -ne 0 ]; then
+		echo "Neither a Pseudo nor a title found for address $owners_pubkey";
+		exit 1;
+	fi
+	ownersPseudo=`echo $profile | sed -E "s/.*\"title\": \"([^\"]*).*/\1/g"`
+	if [ "$profile" = "$ownersPseudo" ]; then
+		echo "Neither a Pseudo nor a title found for address $owners_pubkey";
+		exit 1;
+	fi
+fi
+
 
 if [ $simulate -ne 1 ]; then
 	echo "IMPORTANT: the amount of $totalAmount Junes will be tranfered from the following accout:"
-	echo "    Pseudo: $ownersPseudo"
+	echo "    Pseudo or Title: $ownersPseudo"
 	echo "    Public Key: $owners_pubkey"
 	echo "The secret identifier and password will be stored in the file $outputFile. If you loose this file the money will be lost"
 	read -p 'Proceed (Y/N): ' proceed
@@ -131,7 +154,6 @@ if [ $simulate -ne 1 ]; then
 fi
 
 
-name=`echo "${ownersPseudo}_$$"`
 name=`openssl rand -hex 2`
 ctr=$$
 
@@ -158,11 +180,11 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	echo "  (Clé publique: $pubkey)" >> $outputFile
 	
 	if [ $simulate -ne 1 ]; then
-		if [ $addLogo -eq 1 ]; then
+		if [ $hasJaklis -eq 1 ]; then
 			pubKeyFile=$(mktemp  /tmp/.XXXXXXXXX)
 			chmod 600 $pubKeyFile
 			python3 save_and_load_private_key_file_pubsec.py  ${identifiant} $passFormatted $pubKeyFile
-			jaklis -k $pubKeyFile  set -d "Cheque June émis le $now" -A logo.png
+			jaklis -k $pubKeyFile  set -d "Chèque June émis le $now" -A logo.png
 			srm $pubKeyFile
 		fi
 
