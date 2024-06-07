@@ -36,13 +36,14 @@ amount=none
 number=none
 simulate=0
 outputFile="none"
-weblink="none"
+weblink=$JUNE_CHEQUE_WEBLINK
 
 now=`date +"%d/%m/%Y"`
 
 function show_usage {
   echo "Usage: createCheques.sh -n <number of cheques> -a <amount of each cheques> [-s] -o <output file> [-c <link to website running cesium or similar>]"
   echo "    -s: simulate only. Don't tranfer any money."
+  echo "    -c: default is '$JUNE_CHEQUE_WEBLINK' (env variable JUNE_CHEQUE_WEBLINK)."
 }
 
 while getopts "ha:n:so:c:" opt; do
@@ -163,7 +164,7 @@ name=`openssl rand -hex 2`
 ctr=$$
 
 webLinkHintText=""
-if [ $weblink != "none" ]; then
+if [ -n "$weblink" ]; then
 	webLinkHintText="(par exemple via le site $weblink) "
 fi
 
