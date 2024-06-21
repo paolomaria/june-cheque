@@ -16,11 +16,12 @@ With this CLI you can create June cheques which then can be printed out as paper
 
 The packages which provide the following binaries have to be installed:
 
- - openssl
- - python3
- - srm
- - silkaj
- - [jaklis]
+ - openssl (`sudo apt-get install openssl`)
+ - python3 (`sudo apt-get install python3`)
+ - srm (`sudo apt-get install secure-delete`)
+ - silkaj (`pip3 install silkaj`)
+ - ([jaklis](https://git.p2p.legal/axiom-team/jaklis))
+	 + is only needed if you want to create cheques via a non member account.
  
 ## How to use
 
