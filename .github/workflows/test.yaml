@@ -49,3 +49,10 @@ jobs:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
 
+    - name: run transfer
+      run: |
+        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o real-check.txt -s
+        cat real-check.txt
+      env:
+        GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
+        GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
