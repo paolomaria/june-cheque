@@ -14,10 +14,12 @@ jobs:
 
     - name: create the package
       run: |
+        cd june-cheque
         make pkg-debi
 
     - name: install the package
       run: |
+        cd june-cheque
         dpkg -i *.deb
 
     - name: run help of the package
