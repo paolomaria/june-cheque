@@ -1,0 +1,1 @@
+ln -s /opt/june-cheque/bin/createCheques.sh /usr/local/bin/june-cheque-create
