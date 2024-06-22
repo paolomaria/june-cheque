@@ -16,7 +16,7 @@
 import getpass
 import argparse
 from duniterpy.key import SigningKey
-from silkaj.public_key import gen_pubkey_checksum
+from silkaj import public_key
 
 ################################################
 
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 	
     key = SigningKey.from_credentials(args.indentifier, args.password)
-    pubkey_cksum = gen_pubkey_checksum(key.pubkey)
+    pubkey_cksum = public_key.gen_pubkey_checksum(key.pubkey)
 
     # Display your public key
     print(f"{pubkey_cksum}")
