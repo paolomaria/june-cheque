@@ -25,7 +25,7 @@ jobs:
     - name: install the package
       run: |
         cd june-cheque
-        dpkg -i *.deb
+        sudo dpkg -i *.deb
 
     - name: run help of the package
       run: |
