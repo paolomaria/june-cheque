@@ -27,6 +27,10 @@ jobs:
         cd june-cheque
         sudo apt-get install ./*.deb
 
+    - name: install python stuff
+      run: |
+        pip3 install silkaj
+
     - name: run help of the package
       run: |
         june-cheque-create -h
