@@ -1,0 +1,6 @@
+Package: June-Cheque
+Version: __VERSION__
+Maintainer: Paolo G
+Architecture: all
+Description: A CLI in order to create cheques for the June currency
+Depends: openssl, python3, secure-delete, silkaj, python3-duniterpy

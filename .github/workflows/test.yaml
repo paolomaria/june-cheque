@@ -1,0 +1,25 @@
+name: Test debian package creation
+
+on:
+  workflow_dispatch:
+
+
+
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: create the package
+      run: |
+        make pkg-debi
+
+    - name: install the package
+      run: |
+        dpkg -i *.deb
+
+    - name: run help of the package
+      run: |
+        june-cheque-create -h
