@@ -33,7 +33,7 @@ jobs:
 
     - name: run simulation
       run: |
-        printf "%s\n%s" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 10 -n 5 -o gha-check.txt -s
+        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 10 -n 5 -o gha-check.txt -s
         cat gha-check.txt
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
