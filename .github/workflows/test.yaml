@@ -31,6 +31,12 @@ jobs:
       run: |
         pip3 install silkaj
 
+    - name: install jaklis
+      run: |
+        git clone https://git.p2p.legal/axiom-team/jaklis.git
+        cd jaklis
+        bash setup.sh
+
     - name: run help of the package
       run: |
         june-cheque-create -h
