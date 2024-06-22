@@ -12,6 +12,11 @@ jobs:
 
     steps:
 
+    - name: Checkout the june-cheque repo
+      uses: actions/checkout@v2
+      with:
+        path: june-cheque
+
     - name: create the package
       run: |
         cd june-cheque
