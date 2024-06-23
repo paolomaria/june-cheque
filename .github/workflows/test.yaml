@@ -60,7 +60,7 @@ jobs:
     - name: archive encoded cheque
       uses: actions/upload-artifact@v4
       with:
-        name: checks
+        name: script-checks
         path: june-cheque/test_script_check.txt.enc
           
   test_pkg:
@@ -119,5 +119,5 @@ jobs:
     - name: archive encoded cheque
       uses: actions/upload-artifact@v4
       with:
-        name: checks
+        name: pkg-checks
         path: june-cheque/test_pkg_check.txt.enc
