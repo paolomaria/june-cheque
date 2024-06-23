@@ -55,11 +55,11 @@ jobs:
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
 
-      - name: archive encoded cheque
-        uses: actions/upload-artifact@v4
-        with:
-          name: checks
-          path: june-cheque/test_script_check.txt.enc
+    - name: archive encoded cheque
+      uses: actions/upload-artifact@v4
+      with:
+        name: checks
+        path: june-cheque/test_script_check.txt.enc
           
   test_pkg:
     runs-on: ubuntu-latest
@@ -114,8 +114,8 @@ jobs:
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
 
-      - name: archive encoded cheque
-        uses: actions/upload-artifact@v4
-        with:
-          name: checks
-          path: june-cheque/test_pkg_check.txt.enc
+    - name: archive encoded cheque
+      uses: actions/upload-artifact@v4
+      with:
+        name: checks
+        path: june-cheque/test_pkg_check.txt.enc
