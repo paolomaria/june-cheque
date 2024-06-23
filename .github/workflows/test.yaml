@@ -3,9 +3,6 @@ name: Test debian package creation
 on:
   workflow_dispatch:
 
-
-
-
 jobs:
   test_script:
     runs-on: ubuntu-latest
@@ -50,7 +47,6 @@ jobs:
       run: |
         cd june-cheque
         printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 1 -n 1 -o real-check.txt
-        cat real-check.txt
         cat real-check.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > test_script_check.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
@@ -109,7 +105,6 @@ jobs:
     - name: run transfer
       run: |
         printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o real-check.txt
-        cat real-check.txt
         cat real-check.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/test_pkg_check.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
