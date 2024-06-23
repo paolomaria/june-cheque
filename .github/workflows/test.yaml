@@ -22,6 +22,8 @@ jobs:
         sudo apt-get install openssl
         sudo apt-get install python3
         sudo apt-get install secure-delete
+        sudo apt-get install python3-pip
+        sudo apt-get install python3-duniterpy
         pip3 install silkaj
 
     - name: install jaklis
