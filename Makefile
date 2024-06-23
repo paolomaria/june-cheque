@@ -2,7 +2,7 @@ include config/config.proj
 
 SED_RULES= \
 	-e "s@^MY_PATH=.*@MY_PATH=/opt/june-cheque@g" \
-	-e "s@^MY_BIN_PATH=.*@MY_PATH=/opt/june-cheque/bin@g" \
+	-e "s@^MY_BIN_PATH=.*@MY_BIN_PATH=/opt/june-cheque/bin@g" \
 	-e "s@__VERSION__@${VERSION}@g"
 
 PACKAGE_NAME=june-cheque.${VERSION}
