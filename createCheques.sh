@@ -2,7 +2,7 @@
 set -e
 
 MY_PATH=.
-MY_BIN_PATH=${MY_PATH}/bin
+MY_BIN_PATH=.
 
 function show_dep_text {
 	echo 'Checking presence of the required shell programs (openssl, python3, srm, silkaj)...'
