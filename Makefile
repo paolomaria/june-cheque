@@ -42,7 +42,7 @@ release: ${PACKAGE_NAME}.deb
 		echo "No GITHUB_TOKEN specifiec"; \
 		exit 1; \
 	fi
-	VERSION=${VERSION} httest ./pkg/release.htt | sed -e "s/Bearer.*/Bearer/g"
+	VERSION=${VERSION} httest ./pkg/release.htt > httest.log
 
 ${PACKAGE_NAME}.deb:
 	make pkg-debi
