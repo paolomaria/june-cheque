@@ -1,6 +1,5 @@
 import argparse
 from duniterpy.key import SigningKey
-from silkaj.public_key import gen_pubkey_checksum
 
 if __name__ == "__main__":
 

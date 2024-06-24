@@ -2,6 +2,7 @@
 set -e
 
 MY_PATH=.
+MY_BIN_PATH=.
 
 function show_dep_text {
 	echo 'Checking presence of the required shell programs (openssl, python3, srm, silkaj)...'
@@ -113,7 +114,7 @@ read -sp 'Password: ' secretPw
 echo
 
 owners_lookup_failed=0
-owners_pubkey=`python3 ${MY_PATH}/create_public_key.py "$secretId" "$secretPw"`
+owners_pubkey=`python3 ${MY_BIN_PATH}/create_public_key.py "$secretId" "$secretPw"`
 owners_lookup=`silkaj  wot lookup $owners_pubkey` || owners_lookup_failed=1
 
 #echo "$owners_lookup"
@@ -127,7 +128,7 @@ else
 	noProfileFound=0
 	pubKeyFile=$(mktemp  /tmp/.XXXXXXXXX)
 	chmod 600 $pubKeyFile
-	python3 ${MY_PATH}/save_and_load_private_key_file_pubsec.py  $secretId $secretPw $pubKeyFile
+	python3 ${MY_BIN_PATH}/save_and_load_private_key_file_pubsec.py  $secretId $secretPw $pubKeyFile
 	profile=`jaklis -k $pubKeyFile  get` || noProfileFound=1
 	srm $pubKeyFile
 	if [ $noProfileFound -ne 0 ]; then
@@ -180,7 +181,7 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	
 	ctr=$(($ctr + 1))
 	identifiant="${name}-$ctr"
-	pubkey=`python3 ${MY_PATH}/create_public_key.py "${identifiant}" "$passFormatted"`
+	pubkey=`python3 ${MY_BIN_PATH}/create_public_key.py "${identifiant}" "$passFormatted"`
 	echo "Émis par $ownersPseudo ($owners_pubkey) le $now" >> $outputFile
 	echo "Pour: ___________________________, le __/__/____" >> $outputFile
 	echo "  Identifiant secret: ${identifiant}" >> $outputFile
@@ -191,14 +192,14 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 		if [ $hasJaklis -eq 1 ]; then
 			pubKeyFile=$(mktemp  /tmp/.XXXXXXXXX)
 			chmod 600 $pubKeyFile
-			python3 ${MY_PATH}/save_and_load_private_key_file_pubsec.py  ${identifiant} $passFormatted $pubKeyFile
+			python3 ${MY_BIN_PATH}/save_and_load_private_key_file_pubsec.py  ${identifiant} $passFormatted $pubKeyFile
 			jaklis -k $pubKeyFile  set -d "Chèque June émis le $now" -A ${MY_PATH}/images/logo.png
 			srm $pubKeyFile
 		fi
 
 		tfile=$(mktemp  /tmp/.XXXXXXXXX)
 		chmod 600 $tfile
-		python3 ${MY_PATH}/createKeyFile.py "$secretId" "$secretPw" "$tfile"
+		python3 ${MY_BIN_PATH}/createKeyFile.py "$secretId" "$secretPw" "$tfile"
 		silkaj -af --file "$tfile" money transfer -a $amount -r "$pubkey" -c "cheque  $pubkey" -y
 		srm $tfile
 		echo "  Valeur: $amount June." >> $outputFile

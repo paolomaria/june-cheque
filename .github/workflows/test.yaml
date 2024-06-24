@@ -2,24 +2,178 @@ name: Test debian package creation
 
 on:
   workflow_dispatch:
-
-
-
+    inputs:
+      build-release:
+        type: choice
+        description: "Build a new release"
+        required: true
+        options:
+            - false
+            - true
+      do-real-transfer:
+        type: choice
+        description: "Create real cheques"
+        required: true
+        options:
+            - false
+            - true
 
 jobs:
-  build_and_test:
+  test_script:
     runs-on: ubuntu-latest
 
     steps:
 
+    - name: Checkout the june-cheque repo
+      uses: actions/checkout@v2
+      with:
+        path: june-cheque
+
+    - name: install needed packages
+      run: |
+        sudo apt-get install openssl
+        sudo apt-get install python3
+        sudo apt-get install secure-delete
+        sudo apt-get install python3-pip
+        sudo apt-get install python3-duniterpy
+        pip3 install silkaj
+
+    - name: install jaklis
+      run: |
+        git clone https://git.p2p.legal/axiom-team/jaklis.git
+        cd jaklis
+        bash setup.sh
+
+    - name: run help of the package
+      run: |
+        cd june-cheque
+        ./createCheques.sh -h
+
+    - name: run simulation
+      run: |
+        cd june-cheque
+        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 10 -n 5 -o gha-check.txt -s
+        cat gha-check.txt
+      env:
+        GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
+        GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
+
+    - name: run transfer
+      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      run: |
+        cd june-cheque
+        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 1 -n 1 -o real-check.txt
+        cat real-check.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > test_script_check.txt.enc
+      env:
+        GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
+        GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
+        CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
+
+    - name: archive encoded cheque
+      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: script-checks
+        path: june-cheque/test_script_check.txt.enc
+          
+  test_pkg:
+    runs-on: ubuntu-latest
+    needs: test_script
+
+    steps:
+
+    - name: Checkout the june-cheque repo
+      uses: actions/checkout@v2
+      with:
+        path: june-cheque
+
     - name: create the package
       run: |
+        cd june-cheque
         make pkg-debi
 
     - name: install the package
       run: |
-        dpkg -i *.deb
+        cd june-cheque
+        sudo apt-get install ./*.deb
+
+    - name: install python stuff
+      run: |
+        pip3 install silkaj
+
+    - name: install jaklis
+      run: |
+        git clone https://git.p2p.legal/axiom-team/jaklis.git
+        cd jaklis
+        bash setup.sh
 
     - name: run help of the package
       run: |
         june-cheque-create -h
+
+    - name: run simulation
+      run: |
+        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 10 -n 5 -o gha-check.txt -s
+        cat gha-check.txt
+      env:
+        GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
+        GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
+
+    - name: run transfer
+      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      run: |
+        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o real-check.txt
+        cat real-check.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/test_pkg_check.txt.enc
+      env:
+        GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
+        GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
+        CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
+
+    - name: archive encoded cheque
+      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: pkg-checks
+        path: june-cheque/test_pkg_check.txt.enc
+
+  release_package:
+    runs-on: ubuntu-latest
+    needs: test_pkg
+    if: ${{ github.event.inputs.build-release == 'true' }}
+
+    steps:
+
+    - name: Checkout the june-cheque repo
+      uses: actions/checkout@v2
+      with:
+        path: june-cheque
+
+    - name: create the package
+      run: |
+        cd june-cheque
+        make pkg-debi
+
+    - name: install needed packages
+      run: |
+        sudo apt-get install httest
+
+    - name: release the package
+      run: |
+        cd june-cheque
+        RELEASE_BRANCH=$GITHUB_REF_NAME make release
+      env:
+        GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
+
+    - name: encode httest log
+      if: ${{ failure() }}
+      run: |
+        cat june-cheque/httest.log | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/httest.log.enc
+      env:
+        CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
+
+    - name: archive httest log
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: httest-log
+        path: june-cheque/httest.log.enc

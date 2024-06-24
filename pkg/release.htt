@@ -1,0 +1,41 @@
+CLIENT
+
+	_SET PRE_RELEASE=true
+	_IF "$VERSION" MATCH "^main$"
+		_SET PRE_RELEASE=false
+	_END
+	
+	_REQ api.github.com SSL:443
+	__POST /repos/paolomaria/june-cheque/releases HTTP/1.1
+	__Accept: application/vnd.github+json
+	__Authorization: Bearer ${GITHUB_TOKEN}
+	__X-GitHub-Api-Version: 2022-11-28
+	__Content-Length: AUTO
+	__Host: api.github.com
+	__Content-Type: application/x-www-form-urlencoded
+	__user-agent: curl/7.81.0
+	__
+	_-{"tag_name":"release/${VERSION}","target_commitish":"${RELEASE_BRANCH}","name":"v${VERSION}","prerelease":${PRE_RELEASE},"generate_release_notes":false}
+	_MATCH body "\"id\": ([^,]*)" RELEASE_ID
+	_WAIT
+	_CLOSE
+	
+	_EXEC echo "RELEASE_ID = $RELEASE_ID"
+
+	_REQ uploads.github.com SSL:443
+	__POST /repos/paolomaria/june-cheque/releases/${RELEASE_ID}/assets?name=june-cheque.${VERSION}.deb HTTP/1.1
+	__Accept: application/vnd.github+json
+	__Authorization: Bearer ${GITHUB_TOKEN}
+	__X-GitHub-Api-Version: 2022-11-28
+	__Content-Length: AUTO
+	__Host: uploads.github.com
+	__Content-Type: application/octet-stream
+	__user-agent: curl/7.81.0
+	__
+	_SENDFILE june-cheque.${VERSION}.deb
+	_EXPECT headers "201 Created"
+	_WAIT
+	_CLOSE
+	
+
+END

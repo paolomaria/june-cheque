@@ -12,7 +12,39 @@ With this CLI you can create June cheques which then can be printed out as paper
 
 **IMPORTANT**: this CLI is still experimental. Use it at your own risk !!
 
-## Prerequisites
+## Installation for end users
+
+ - Download and install the latest package at https://github.com/paolomaria/june-cheque/releases
+ ```
+wget https://github.com/paolomaria/june-cheque/releases/download/release/1.0/june-cheque.1.0.deb
+sudo apt-get install ./june-cheque.1.0.deb
+ ```
+ 
+ - install silkaj:
+ ```
+ pip3 install silkaj
+ ```
+  - install jaklis (only if you want to create cheques from non member accounts)
+```
+git clone https://git.p2p.legal/axiom-team/jaklis.git
+cd jaklis
+bash setup.sh
+```
+ - run the june-cheque-create binary:
+```
+june-cheque-create -h
+```
+
+If you want to create 10 cheques of 5 June each, just call:
+```
+june-cheque-create -n 10 -a 5 -o myFirstCheque.txt
+```
+
+The cheques are currently in french.
+
+## Installation for developers
+
+### Prerequisites
 
 The packages which provide the following binaries have to be installed:
 
@@ -23,7 +55,7 @@ The packages which provide the following binaries have to be installed:
  - ([jaklis](https://git.p2p.legal/axiom-team/jaklis))
 	 + is only needed if you want to create cheques via a non member account.
  
-## How to use
+### How to use
 
 Once you did checkout the project go to the june-cheque directory and all `./createCheques.sh`:
 ```

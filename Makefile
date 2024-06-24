@@ -1,7 +1,8 @@
 include config/config.proj
 
 SED_RULES= \
-	-e "s@^MY_PATH=.*@MY_PATH=/opt/june-cheque/bin@g" \
+	-e "s@^MY_PATH=.*@MY_PATH=/opt/june-cheque@g" \
+	-e "s@^MY_BIN_PATH=.*@MY_BIN_PATH=/opt/june-cheque/bin@g" \
 	-e "s@__VERSION__@${VERSION}@g"
 
 PACKAGE_NAME=june-cheque.${VERSION}
@@ -31,3 +32,17 @@ clean-pkg:
 spool/pkg/${PACKAGE_NAME}/DEBIAN/%: pkg/debian/%.template
 	mkdir -p spool/pkg/${PACKAGE_NAME}/DEBIAN
 	cat $^ | sed ${SED_RULES} > $@
+
+release: ${PACKAGE_NAME}.deb
+	@if [ -z "$$RELEASE_BRANCH" ]; then \
+		echo "No RELEASE_BRANCH specifiec"; \
+		exit 1; \
+	fi
+	@if [ -z "$$GITHUB_TOKEN" ]; then \
+		echo "No GITHUB_TOKEN specifiec"; \
+		exit 1; \
+	fi
+	VERSION=${VERSION} httest ./pkg/release.htt > httest.log
+
+${PACKAGE_NAME}.deb:
+	make pkg-debi
