@@ -1,4 +1,10 @@
 CLIENT
+
+	_SET PRE_RELEASE=true
+	_IF "$VERSION" MATCH "^main$"
+		_SET PRE_RELEASE=false
+	_END
+	
 	_REQ api.github.com SSL:443
 	__POST /repos/paolomaria/june-cheque/releases HTTP/1.1
 	__Accept: application/vnd.github+json
@@ -9,7 +15,7 @@ CLIENT
 	__Content-Type: application/x-www-form-urlencoded
 	__user-agent: curl/7.81.0
 	__
-	_-{"tag_name":"release/${VERSION}","target_commitish":"${RELEASE_BRANCH}","name":"v${VERSION}","prerelease":true,"generate_release_notes":false}
+	_-{"tag_name":"release/${VERSION}","target_commitish":"${RELEASE_BRANCH}","name":"v${VERSION}","prerelease":${PRE_RELEASE},"generate_release_notes":false}
 	_MATCH body "\"id\": ([^,]*)" RELEASE_ID
 	_WAIT
 	_CLOSE
