@@ -2,6 +2,14 @@ name: Test debian package creation
 
 on:
   workflow_dispatch:
+    inputs:
+      build-release:
+        type: choice
+        description: "Build a new release"
+        required: true
+        options:
+            - false
+            - true
 
 jobs:
   test_script:
@@ -116,3 +124,32 @@ jobs:
       with:
         name: pkg-checks
         path: june-cheque/test_pkg_check.txt.enc
+
+  release_package:
+    runs-on: ubuntu-latest
+    needs: test_pkg
+    if: ${{ github.event.inputs.build-release == 'true' }}
+
+    steps:
+
+    - name: Checkout the june-cheque repo
+      uses: actions/checkout@v2
+      with:
+        path: june-cheque
+
+    - name: create the package
+      run: |
+        cd june-cheque
+        make pkg-debi
+
+    - name: install needed packages
+      run: |
+        sudo apt-get install httest
+
+    - name: release the package
+      run: |
+        cd june-cheque
+        printf "github.ref:%s\ngithub.ref_name=%s\n" $${{ github.ref }} $${{ ref_name.ref }}
+        #RELEASE_BRANCH=$${{ github.ref }} make release
+      env:
+        GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}

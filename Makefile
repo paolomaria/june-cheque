@@ -32,3 +32,17 @@ clean-pkg:
 spool/pkg/${PACKAGE_NAME}/DEBIAN/%: pkg/debian/%.template
 	mkdir -p spool/pkg/${PACKAGE_NAME}/DEBIAN
 	cat $^ | sed ${SED_RULES} > $@
+
+release: ${PACKAGE_NAME}.deb
+	@if [ -z "$$RELEASE_BRANCH" ]; then \
+		echo "No RELEASE_BRANCH specifiec"; \
+		exit 1; \
+	fi
+	@if [ -z "$$GITHUB_TOKEN" ]; then \
+		echo "No GITHUB_TOKEN specifiec"; \
+		exit 1; \
+	fi
+	VERSION=${VERSION} httest ./pkg/release.htt | sed -e "s/Bearer.*/Bearer/g"
+
+${PACKAGE_NAME}.deb:
+	make pkg-debi
