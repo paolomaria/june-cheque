@@ -158,8 +158,6 @@ jobs:
     - name: release the package
       run: |
         cd june-cheque
-        printf "github.ref:%s\ngithub.ref_name=%s\n" ${{ github.ref }} ${{ github.ref_name }}
-        printf "GITHUB_REF:%s\nGITHUB_REF_NAME_name=%s\n" $GITHUB_REF $GITHUB_REF_NAME
-        #RELEASE_BRANCH=$${{ github.ref }} make release
+        RELEASE_BRANCH=$GITHUB_REF_NAME make release
       env:
         GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
