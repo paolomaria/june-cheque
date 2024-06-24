@@ -10,6 +10,13 @@ on:
         options:
             - false
             - true
+      do-real-transfer:
+        type: choice
+        description: "Create real cheques"
+        required: true
+        options:
+            - false
+            - true
 
 jobs:
   test_script:
@@ -52,6 +59,7 @@ jobs:
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
 
     - name: run transfer
+      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       run: |
         cd june-cheque
         printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 1 -n 1 -o real-check.txt
@@ -111,6 +119,7 @@ jobs:
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
 
     - name: run transfer
+      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       run: |
         printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o real-check.txt
         cat real-check.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/test_pkg_check.txt.enc
@@ -149,7 +158,8 @@ jobs:
     - name: release the package
       run: |
         cd june-cheque
-        printf "github.ref:%s\ngithub.ref_name=%s\n" $${{ github.ref }} $${{ github.ref_name.ref }}
+        printf "github.ref:%s\ngithub.ref_name=%s\n" ${{ github.ref }} ${{ github.ref_name }}
+        printf "GITHUB_REF:%s\nGITHUB_REF_NAME_name=%s\n" $GITHUB_REF $GITHUB_REF_NAME
         #RELEASE_BRANCH=$${{ github.ref }} make release
       env:
         GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
