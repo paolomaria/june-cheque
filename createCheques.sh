@@ -49,7 +49,7 @@ outputDir=$JUNE_CHEQUE_HOME
 now=`date +"%d/%m/%Y"`
 
 function show_usage {
-  if [ $VERSION != "__VERSION__" ]; then
+  if [ $VERSION != "__VERS""ION__" ]; then
   	echo "$0, version $VERSION"
   fi
   echo "Usage: $0 -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>]"
