@@ -163,7 +163,7 @@ if [ $simulate -ne 1 ]; then
 fi
 
 
-name=`openssl rand -hex 2`
+name=`openssl rand -base64 4 | sed -e "s@/@a@g" -e "s/\+/z/g" -e "s/=//g"`
 ctr=$$
 
 webLinkHintText=""
@@ -176,8 +176,8 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 		echo "          ----------" >> $outputFile
 		echo >> $outputFile
 	fi
-	userpass=`openssl rand -base64 6`
-	passFormatted=`echo $userpass | sed -E "s/(^....)/\1-/g"`
+	userpass=`openssl rand -base64 11 | sed -e "s@/@a@g" -e "s/\+/z/g" -e "s/=//g" `
+	passFormatted=`echo $userpass | sed -E "s/(^.....)/\1-/g" | sed -E "s/(.....$)/-\1/g" `
 	
 	ctr=$(($ctr + 1))
 	identifiant="${name}-$ctr"
