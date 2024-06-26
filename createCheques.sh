@@ -3,6 +3,7 @@ set -e
 
 MY_PATH=.
 MY_BIN_PATH=.
+VERSION="__VERSION__"
 
 function show_dep_text {
 	echo 'Checking presence of the required shell programs (openssl, python3, srm, silkaj)...'
@@ -48,6 +49,9 @@ outputDir=$JUNE_CHEQUE_HOME
 now=`date +"%d/%m/%Y"`
 
 function show_usage {
+  if [ $VERSION != "__VERSION__" ]; then
+  	echo "$0, version $VERSION"
+  fi
   echo "Usage: $0 -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>]"
   echo "    -s: simulate only. Don't tranfer any money."
   echo "    -c: default is '$JUNE_CHEQUE_WEBLINK' (env variable JUNE_CHEQUE_WEBLINK)."
@@ -168,7 +172,7 @@ if [ $simulate -ne 1 ]; then
 fi
 
 
-name=`openssl rand -base64 4 | sed -e "s@/@a@g" -e "s/\+/z/g" -e "s/=//g"`
+name=`openssl rand -base64 4 | sed -e "s@/@a@g" -e "s/\+/z/g" -e "s/=//g" -e "s/^.//g"`
 
 webLinkHintText=""
 if [ -n "$weblink" ]; then
