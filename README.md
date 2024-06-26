@@ -37,7 +37,7 @@ june-cheque-create -h
 
 If you want to create 10 cheques of 5 June each, just call:
 ```
-june-cheque-create -n 10 -a 5 -o myFirstCheque.txt
+june-cheque-create -n 10 -a 5
 ```
 
 The cheques are currently in french.
@@ -57,20 +57,22 @@ The packages which provide the following binaries have to be installed:
  
 ### How to use
 
-Once you did checkout the project go to the june-cheque directory and all `./createCheques.sh`:
+Once you did checkout the project go to the june-cheque directory and call `./createCheques.sh`:
 ```
 cd june-cheque
 ./createCheques.sh
 ```
 A usage message will appear:
 ```
-Usage: createCheques.sh -n <number of cheques> -a <amount of each cheques> [-s] -o <output file>
+Usage: ./createCheques.sh -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>]
     -s: simulate only. Don't tranfer any money.
+    -c: default is '' (env variable JUNE_CHEQUE_WEBLINK).
+    -o: default is '/home/user/june-cheques' (env variable JUNE_CHEQUE_HOME).
 ```
 
 If you want to create 10 cheques of 5 June each, just call:
 ```
-createCheques.sh -n 10 -a 5 -o myFirstCheque.txt
+createCheques.sh -n 10 -a 5
 ```
 
 The cheques are currently in french.
