@@ -2,6 +2,9 @@ name: Cashback test cheques
 
 on:
   workflow_dispatch:
+  schedule:
+    # run always at 11 in the evening
+    - cron:  '0 23 * * *'
 
 jobs:
   do_cashback:
