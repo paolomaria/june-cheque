@@ -2,6 +2,9 @@ name: Cashback test cheques
 
 on:
   workflow_dispatch:
+  schedule:
+    # run always at 11 in the evening
+    - cron:  '0 23 * * *'
 
 jobs:
   do_cashback:
@@ -27,7 +30,7 @@ jobs:
     - name: do the cashback of the script checks
       run: |
         cd june-cheque
-        ARTIFACT_NAME=script-checks httest -L htt/cashBackCheques.htt > httest.log
+        ARTIFACT_NAME=script-checks httest htt/cashBackCheques.htt > httest.log
       env:
         GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
@@ -35,20 +38,20 @@ jobs:
     - name: do the cashback of the pkg checks
       run: |
         cd june-cheque
-        ARTIFACT_NAME=pkg-checks httest -L htt/cashBackCheques.htt >> httest.log
+        ARTIFACT_NAME=pkg-checks httest htt/cashBackCheques.htt >> httest.log
       env:
         GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
 
     - name: encode httest log
-      if: ${{ failure() }}
+      if: ${{ always() }}
       run: |
         cat june-cheque/httest.log | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/httest.log.enc
       env:
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
 
     - name: archive httest log
-      if: ${{ failure() }}
+      if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
         name: httest-log
