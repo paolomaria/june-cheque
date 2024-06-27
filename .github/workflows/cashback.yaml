@@ -27,7 +27,7 @@ jobs:
     - name: do the cashback of the script checks
       run: |
         cd june-cheque
-        ARTIFACT_NAME=script-checks httest -L htt/cashBackCheques.htt > httest.log
+        ARTIFACT_NAME=script-checks httest htt/cashBackCheques.htt > httest.log
       env:
         GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
@@ -35,7 +35,7 @@ jobs:
     - name: do the cashback of the pkg checks
       run: |
         cd june-cheque
-        ARTIFACT_NAME=pkg-checks httest -L htt/cashBackCheques.htt >> httest.log
+        ARTIFACT_NAME=pkg-checks httest htt/cashBackCheques.htt >> httest.log
       env:
         GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
