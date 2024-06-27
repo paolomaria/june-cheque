@@ -1,0 +1,54 @@
+#ARTIFACT_NAME=pkg-checks
+#ARTIFACT_NAME=script-checks
+CLIENT
+
+	_REQ api.github.com SSL:443
+	__GET /repos/paolomaria/june-cheque/actions/artifacts?name=${ARTIFACT_NAME} HTTP/1.1
+	__Accept: application/vnd.github+json
+	__Authorization: Bearer ${GITHUB_TOKEN}
+	__X-GitHub-Api-Version: 2022-11-28
+	__Host: api.github.com
+	__user-agent: curl/7.81.0
+	__
+	_MATCH body "\"total_count\": ([0-9]*)" NUMBER_OF_ARTIFACTS
+	_WAIT
+	_CLOSE
+	
+	_LOOP $NUMBER_OF_ARTIFACTS i
+	#_LOOP 1 i
+		_MATH:OP $i ADD 1 INDEX
+		_REQ api.github.com SSL:443
+		__GET /repos/paolomaria/june-cheque/actions/artifacts?per_page=1&page=${INDEX} HTTP/1.1
+		__Accept: application/vnd.github+json
+		__Authorization: Bearer ${GITHUB_TOKEN}
+		__X-GitHub-Api-Version: 2022-11-28
+		__Host: api.github.com
+		__user-agent: curl/7.81.0
+		__
+		_MATCH body "\"archive_download_url\": \"([^\"]*)" DOWNLOAD_URL
+		_WAIT
+		_CLOSE
+		
+		_EXEC mkdir -p /tmp/artifact_$INDEX
+		_EXEC curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28" -o /tmp/artifact_$INDEX/dummy.zip $DOWNLOAD_URL 
+		
+		_EXEC cd /tmp/artifact_$INDEX; unzip -o dummy.zip
+		
+		_MATCH exec "Identifiant secret: (.*)" SECRET_IDENTIFIER
+		_MATCH exec "Mot de passe: (.*)" SECRET_PW
+		_EXEC cat /tmp/artifact_$INDEX/*.enc | openssl enc -d -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY
+		
+		_EXEC python3 createKeyFile.py $SECRET_IDENTIFIER $SECRET_PW /tmp/artifact_$INDEX/authfile
+		
+		_MATCH exec "Total balance[.^|]| ([0-9])" BALANCE
+		_EXEC silkaj -af --file /tmp/artifact_$INDEX/authfile money balance | grep 'Total balance'
+		
+		_IF $BALANCE GT 0
+			_EXEC silkaj -af --file /tmp/artifact_$INDEX/authfile money transfer -a $BALANCE -r EZPRNCiZhTbbgMZqpTA37btzUsQ45BY9QfTdtUT5tZBr:Chz -y
+		_ELSE
+			_EXEC echo "NO TRANSFER"
+		_END
+		
+	_END
+	
+END
