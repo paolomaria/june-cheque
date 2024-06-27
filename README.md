@@ -16,8 +16,8 @@ With this CLI you can create June cheques which then can be printed out as paper
 
  - Download and install the latest package at https://github.com/paolomaria/june-cheque/releases
  ```
-wget https://github.com/paolomaria/june-cheque/releases/download/release/1.0/june-cheque.1.0.deb
-sudo apt-get install ./june-cheque.1.0.deb
+wget https://github.com/paolomaria/june-cheque/releases/download/release/2.0/june-cheque.2.0.deb
+sudo apt-get install ./june-cheque.2.0.deb
  ```
  
  - install silkaj:
