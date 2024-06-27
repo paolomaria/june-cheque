@@ -3,6 +3,7 @@ set -e
 
 MY_PATH=.
 MY_BIN_PATH=.
+VERSION="__VERSION__"
 
 function show_dep_text {
 	echo 'Checking presence of the required shell programs (openssl, python3, srm, silkaj)...'
@@ -31,22 +32,30 @@ if ! [ -x "$(command -v silkaj)" ]; then
     exit 1
 fi
 if ! [ -x "$(command -v jaklis)" ]; then
-    echo 'Notice: jaklis is not present on your system. No logo will be added to the check account.'
+    echo 'Notice: jaklis is not present on your system. Cheques can only be issued from member accounts.'
 	hasJaklis=0
+fi
+
+if [ -z "$JUNE_CHEQUE_HOME" ]; then
+JUNE_CHEQUE_HOME=${HOME}/june-cheques
 fi
 
 amount=none
 number=none
 simulate=0
-outputFile="none"
 weblink=$JUNE_CHEQUE_WEBLINK
+outputDir=$JUNE_CHEQUE_HOME
 
 now=`date +"%d/%m/%Y"`
 
 function show_usage {
-  echo "Usage: $0 -n <number of cheques> -a <amount of each cheques> [-s] -o <output file> [-c <link to website running cesium or similar>]"
+  if [ $VERSION != "__VERS""ION__" ]; then
+  	echo "$0, version $VERSION"
+  fi
+  echo "Usage: $0 -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>]"
   echo "    -s: simulate only. Don't tranfer any money."
   echo "    -c: default is '$JUNE_CHEQUE_WEBLINK' (env variable JUNE_CHEQUE_WEBLINK)."
+  echo "    -o: default is '$JUNE_CHEQUE_HOME' (env variable JUNE_CHEQUE_HOME)."
 }
 
 while getopts "ha:n:so:c:" opt; do
@@ -59,7 +68,7 @@ while getopts "ha:n:so:c:" opt; do
       ;;
     a)  amount=$OPTARG
       ;;
-    o)  outputFile=$OPTARG
+    o)  outputDir=$OPTARG
       ;;
     c)  weblink=$OPTARG
       ;;
@@ -69,11 +78,6 @@ while getopts "ha:n:so:c:" opt; do
 done
 
 if [ $amount == "none" -o $number == "none" ]; then
-	show_usage
-	exit 1
-fi
-
-if [ $outputFile == "none" ]; then
 	show_usage
 	exit 1
 fi
@@ -98,10 +102,15 @@ if [ $number -gt 10 ]; then
 	exit 1
 fi
 
-if [ -s $outputFile ]; then
-	echo "The file $outputFile already exists"
-	exit 1
-fi
+mkdir -p $outputDir
+
+ctr=$$
+nowFile=`date +"%Y%m%d%H%M%S"`
+outputFile=$outputDir"/cheque_"$nowFile"_"$ctr.txt
+while [ -s $outputFile ]; do
+	ctr=$(($ctr + 1))
+	outputFile=$outputDir"/cheque_"$nowFile"_"$ctr.txt
+done
 
 > $outputFile
 chmod 600 $outputFile
@@ -163,8 +172,7 @@ if [ $simulate -ne 1 ]; then
 fi
 
 
-name=`openssl rand -hex 2`
-ctr=$$
+name=`openssl rand -base64 4 | sed -e "s@/@a@g" -e "s/\+/z/g" -e "s/=//g" -e "s/^.//g"`
 
 webLinkHintText=""
 if [ -n "$weblink" ]; then
@@ -176,8 +184,8 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 		echo "          ----------" >> $outputFile
 		echo >> $outputFile
 	fi
-	userpass=`openssl rand -base64 6`
-	passFormatted=`echo $userpass | sed -E "s/(^....)/\1-/g"`
+	userpass=`openssl rand -base64 11 | sed -e "s@/@a@g" -e "s/\+/z/g" -e "s/=//g" `
+	passFormatted=`echo $userpass | sed -E "s/(^.....)/\1-/g" | sed -E "s/(.....$)/-\1/g" `
 	
 	ctr=$(($ctr + 1))
 	identifiant="${name}-$ctr"

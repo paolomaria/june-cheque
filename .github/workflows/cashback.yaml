@@ -1,0 +1,55 @@
+name: Cashback test cheques
+
+on:
+  workflow_dispatch:
+
+jobs:
+  do_cashback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+
+    - name: Checkout the june-cheque repo
+      uses: actions/checkout@v2
+      with:
+        path: june-cheque
+
+    - name: install needed packages
+      run: |
+        sudo apt-get install openssl
+        sudo apt-get install python3
+        sudo apt-get install secure-delete
+        sudo apt-get install python3-pip
+        sudo apt-get install python3-duniterpy
+        pip3 install silkaj
+        sudo apt-get install httest
+
+    - name: do the cashback of the script checks
+      run: |
+        cd june-cheque
+        ARTIFACT_NAME=script-checks httest -L htt/cashBackCheques.htt > httest.log
+      env:
+        GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
+        CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
+
+    - name: do the cashback of the pkg checks
+      run: |
+        cd june-cheque
+        ARTIFACT_NAME=pkg-checks httest -L htt/cashBackCheques.htt >> httest.log
+      env:
+        GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
+        CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
+
+    - name: encode httest log
+      if: ${{ failure() }}
+      run: |
+        cat june-cheque/httest.log | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/httest.log.enc
+      env:
+        CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
+
+    - name: archive httest log
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: httest-log
+        path: june-cheque/httest.log.enc

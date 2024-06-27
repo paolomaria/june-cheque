@@ -52,8 +52,8 @@ jobs:
     - name: run simulation
       run: |
         cd june-cheque
-        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 10 -n 5 -o gha-check.txt -s
-        cat gha-check.txt
+        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 10 -n 5 -o dummyChecks -s
+        cat dummyChecks/*.txt
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
@@ -62,8 +62,8 @@ jobs:
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       run: |
         cd june-cheque
-        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 1 -n 1 -o real-check.txt
-        cat real-check.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > test_script_check.txt.enc
+        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 1 -n 1 -o test_script_check
+        cat test_script_check/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > test_script_check.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
@@ -113,8 +113,8 @@ jobs:
 
     - name: run simulation
       run: |
-        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 10 -n 5 -o gha-check.txt -s
-        cat gha-check.txt
+        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 10 -n 5 -o dummyChecks -s
+        cat dummyChecks/*.txt
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
@@ -122,8 +122,8 @@ jobs:
     - name: run transfer
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       run: |
-        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o real-check.txt
-        cat real-check.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/test_pkg_check.txt.enc
+        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o test_pkg_check
+        cat test_pkg_check/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/test_pkg_check.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
