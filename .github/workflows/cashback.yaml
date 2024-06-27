@@ -41,14 +41,12 @@ jobs:
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
 
     - name: encode httest log
-      if: ${{ failure() }}
       run: |
         cat june-cheque/httest.log | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/httest.log.enc
       env:
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
 
     - name: archive httest log
-      if: ${{ failure() }}
       uses: actions/upload-artifact@v4
       with:
         name: httest-log
