@@ -29,6 +29,7 @@ CLIENT
 		_WAIT
 		_CLOSE
 		
+		_EXEC rm -rf /tmp/artifact_$INDEX
 		_EXEC mkdir -p /tmp/artifact_$INDEX
 		_EXEC curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28" -o /tmp/artifact_$INDEX/dummy.zip $DOWNLOAD_URL 
 		
