@@ -1,7 +1,7 @@
 name: Test debian package creation
 
 on:
-  pull_request
+  pull_request:
   workflow_dispatch:
     inputs:
       build-release:
