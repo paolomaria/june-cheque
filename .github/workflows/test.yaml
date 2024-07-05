@@ -1,6 +1,7 @@
 name: Test debian package creation
 
 on:
+  pull_request
   workflow_dispatch:
     inputs:
       build-release:
@@ -19,8 +20,28 @@ on:
             - true
 
 jobs:
+  unit_tests:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout the june-cheque repo
+      uses: actions/checkout@v2
+      with:
+        path: june-cheque
+
+    - name: install needed packages
+      run: |
+        sudo apt-get install httest
+
+    - name: run tests
+      run: |
+        cd june-cheque
+        make test
+
   test_script:
     runs-on: ubuntu-latest
+    needs: unit_tests
 
     steps:
 
