@@ -67,7 +67,7 @@ A usage message will appear:
 Usage: ./createCheques.sh -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>] 
     -s: simulate only. Don't tranfer any money.
     -c: default is 'https://g-c.li' (env variable JUNE_CHEQUE_WEBLINK).
-    -o: default is '/home/paolo/june-cheques' (env variable JUNE_CHEQUE_HOME).
+    -o: default is '/home/user/june-cheques' (env variable JUNE_CHEQUE_HOME).
     The language of the cheques is 'fr' (env variable JUNE_CHEQUE_LANG).
 ```
 
