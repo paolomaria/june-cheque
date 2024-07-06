@@ -89,6 +89,7 @@ jobs:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
+        JUNE_CHEQUE_LANG: fr
 
     - name: archive encoded cheque
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}
@@ -149,6 +150,7 @@ jobs:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
+        JUNE_CHEQUE_LANG: fr
 
     - name: archive encoded cheque
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}

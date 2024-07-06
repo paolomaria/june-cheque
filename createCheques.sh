@@ -234,7 +234,7 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	else
 		echo "  $VALUE_TXT: $NO_VALUE_TXT." >> $outputFile
 	fi
-	printf "$FINAL_CHEQUE_TXT\n" "$webLinkHintText" >> $outputFile
+	printf "$FINAL_CHEQUE_TXT\n" "$webLinkHintText" $amount >> $outputFile
 
 	echo >> $outputFile
 	
