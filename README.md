@@ -40,7 +40,7 @@ If you want to create 10 cheques of 5 June each, just call:
 june-cheque-create -n 10 -a 5
 ```
 
-The cheques are currently in french or spanish.
+The cheques are currently in french, english or spanish.
 
 ## Installation for developers
 
@@ -76,7 +76,7 @@ If you want to create 10 cheques of 5 June each, just call:
 createCheques.sh -n 10 -a 5
 ```
 
-The cheques are currently in french or spanish.
+The cheques are currently in french, english or spanish.
 
 ## Ideas
 
