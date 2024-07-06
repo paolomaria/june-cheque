@@ -17,6 +17,7 @@ pkg-debi: spool/pkg/${PACKAGE_NAME}/DEBIAN/control spool/pkg/${PACKAGE_NAME}/DEB
 	cat createCheques.sh  | sed ${SED_RULES} > spool/pkg/${PACKAGE_NAME}/opt/june-cheque/bin/createCheques.sh
 	mkdir -p spool/pkg/${PACKAGE_NAME}/opt/june-cheque/images
 	cp images/logo.png spool/pkg/${PACKAGE_NAME}/opt/june-cheque/images
+	rsync --exclude "*.bck" -av ml spool/pkg/${PACKAGE_NAME}/opt/june-cheque
 	chmod 755 spool/pkg/${PACKAGE_NAME}/DEBIAN/postinst spool/pkg/${PACKAGE_NAME}/DEBIAN/postrm
 	cd spool/pkg; dpkg-deb -Z xz --build ${PACKAGE_NAME}
 	mv spool/pkg/${PACKAGE_NAME}.deb .
@@ -46,3 +47,12 @@ release: ${PACKAGE_NAME}.deb
 
 ${PACKAGE_NAME}.deb:
 	make pkg-debi
+
+test:
+	for f in tests/*.htt; do \
+		httest $$f; \
+		if [ $$? -ne 0 ]; then \
+			exit 1; \
+		fi \
+	done
+	./tests/checkTransaltions.sh

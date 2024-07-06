@@ -16,8 +16,8 @@ With this CLI you can create June cheques which then can be printed out as paper
 
  - Download and install the latest package at https://github.com/paolomaria/june-cheque/releases
  ```
-wget https://github.com/paolomaria/june-cheque/releases/download/release/2.0/june-cheque.2.0.deb
-sudo apt-get install ./june-cheque.2.0.deb
+wget https://github.com/paolomaria/june-cheque/releases/download/release/2.1/june-cheque.2.1.deb
+sudo apt-get install ./june-cheque.2.1.deb
  ```
  
  - install silkaj:
@@ -40,7 +40,7 @@ If you want to create 10 cheques of 5 June each, just call:
 june-cheque-create -n 10 -a 5
 ```
 
-The cheques are currently in french.
+The cheques are currently in french or spanish.
 
 ## Installation for developers
 
@@ -64,10 +64,11 @@ cd june-cheque
 ```
 A usage message will appear:
 ```
-Usage: ./createCheques.sh -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>]
+Usage: ./createCheques.sh -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>] 
     -s: simulate only. Don't tranfer any money.
-    -c: default is '' (env variable JUNE_CHEQUE_WEBLINK).
+    -c: default is 'https://g-c.li' (env variable JUNE_CHEQUE_WEBLINK).
     -o: default is '/home/user/june-cheques' (env variable JUNE_CHEQUE_HOME).
+    The language of the cheques is 'fr' (env variable JUNE_CHEQUE_LANG).
 ```
 
 If you want to create 10 cheques of 5 June each, just call:
@@ -75,7 +76,7 @@ If you want to create 10 cheques of 5 June each, just call:
 createCheques.sh -n 10 -a 5
 ```
 
-The cheques are currently in french.
+The cheques are currently in french or spanish.
 
 ## Ideas
 

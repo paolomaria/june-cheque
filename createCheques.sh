@@ -5,6 +5,25 @@ MY_PATH=.
 MY_BIN_PATH=.
 VERSION="__VERSION__"
 
+source $MY_PATH/ml/setDefaultLang.sh
+
+if [ -f $MY_PATH/ml/chequeText.$JUNE_CHEQUE_MAIN_LANG ]; then
+	source $MY_PATH/ml/chequeText.$JUNE_CHEQUE_MAIN_LANG
+else
+	echo "Language file $MY_PATH/ml/chequeText.$JUNE_CHEQUE_MAIN_LANG is missing"
+	exit 1
+fi
+
+if [ -f $MY_PATH/ml/chequeText.$JUNE_CHEQUE_LANG ]; then
+	source $MY_PATH/ml/chequeText.$JUNE_CHEQUE_LANG
+fi
+
+#echo "NO_VALUE=$NO_VALUE"
+#echo "SHELL_LAGUAGE=$SHELL_LAGUAGE"
+#echo "SHELL_MAIN_LAGUAGE=$SHELL_MAIN_LAGUAGE"
+#echo "JUNE_CHEQUE_LANG=$JUNE_CHEQUE_LANG"
+#echo "JUNE_CHEQUE_MAIN_LANG=$JUNE_CHEQUE_MAIN_LANG"
+
 function show_dep_text {
 	echo 'Checking presence of the required shell programs (openssl, python3, srm, silkaj)...'
 }
@@ -52,10 +71,11 @@ function show_usage {
   if [ $VERSION != "__VERS""ION__" ]; then
   	echo "$0, version $VERSION"
   fi
-  echo "Usage: $0 -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>]"
+  echo "Usage: $0 -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>] "
   echo "    -s: simulate only. Don't tranfer any money."
   echo "    -c: default is '$JUNE_CHEQUE_WEBLINK' (env variable JUNE_CHEQUE_WEBLINK)."
   echo "    -o: default is '$JUNE_CHEQUE_HOME' (env variable JUNE_CHEQUE_HOME)."
+  echo "    The language of the cheques is '$JUNE_CHEQUE_LANG' (env variable JUNE_CHEQUE_LANG)."
 }
 
 while getopts "ha:n:so:c:" opt; do
@@ -174,9 +194,9 @@ fi
 
 name=`openssl rand -base64 4 | sed -e "s@/@a@g" -e "s/\+/z/g" -e "s/=//g" -e "s/^.//g"`
 
-webLinkHintText=""
+webLinkHintText=" "
 if [ -n "$weblink" ]; then
-	webLinkHintText="(par exemple via le site $weblink) "
+	webLinkHintText=`printf "$WEBLINK_TEXT" "$weblink"`
 fi
 
 for (( i = 0 ; $i < $number; i = $i + 1)) ; do
@@ -190,11 +210,11 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	ctr=$(($ctr + 1))
 	identifiant="${name}-$ctr"
 	pubkey=`python3 ${MY_BIN_PATH}/create_public_key.py "${identifiant}" "$passFormatted"`
-	echo "Émis par $ownersPseudo ($owners_pubkey) le $now" >> $outputFile
-	echo "Pour: ___________________________, le __/__/____" >> $outputFile
-	echo "  Identifiant secret: ${identifiant}" >> $outputFile
-	echo "  Mot de passe: $passFormatted" >> $outputFile
-	echo "  (Clé publique: $pubkey)" >> $outputFile
+	echo "$ISSUED_BY_TXT $ownersPseudo ($owners_pubkey) $ISSUED_THE_TXT $now" >> $outputFile
+	echo "$ISSUED_FOR_TXT: ___________________________, $ISSUED_THE_TXT __/__/____" >> $outputFile
+	echo "  $SECRET_ID_TXT: ${identifiant}" >> $outputFile
+	echo "  $SECRET_PASS_TXT: $passFormatted" >> $outputFile
+	echo "  ($PUBLIC_KEY_TXT: $pubkey)" >> $outputFile
 	
 	if [ $simulate -ne 1 ]; then
 		if [ $hasJaklis -eq 1 ]; then
@@ -210,11 +230,11 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 		python3 ${MY_BIN_PATH}/createKeyFile.py "$secretId" "$secretPw" "$tfile"
 		silkaj -af --file "$tfile" money transfer -a $amount -r "$pubkey" -c "cheque  $pubkey" -y
 		srm $tfile
-		echo "  Valeur: $amount June." >> $outputFile
+		echo "  $VALUE_TXT: $amount June." >> $outputFile
 	else
-		echo "  Valeur: sans valeur." >> $outputFile
+		echo "  $VALUE_TXT: $NO_VALUE_TXT." >> $outputFile
 	fi
-	echo "Pour encaisser ce chèque enregistrez-vous$webLinkHintText avec l'identifiant secret et le mot de passe en haut et transférez les $amount June vers votre compte. Une fois transférées, le chèque peut être détruit." >> $outputFile
+	printf "$FINAL_CHEQUE_TXT\n" "$webLinkHintText" >> $outputFile
 
 	echo >> $outputFile
 	

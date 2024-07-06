@@ -1,0 +1,51 @@
+CLIENT
+
+	_EXEC echo "source ml/setDefaultLang.sh" > /tmp/testsh
+	_EXEC echo "echo \$SHELL_LAGUAGE" >> /tmp/testsh
+	
+	_EXPECT exec "^fr_CH$"
+	_EXEC LANGUAGE=fr_CH bash /tmp/testsh
+
+	_EXEC echo "source ml/setDefaultLang.sh" > /tmp/testsh
+	_EXEC echo "echo \$SHELL_MAIN_LAGUAGE" >> /tmp/testsh
+	
+	_EXPECT exec "^fr$"
+	_EXEC LANGUAGE=fr_CH bash /tmp/testsh
+
+	_EXEC echo "MY_PATH=." > /tmp/testsh
+	_EXEC echo "source ml/setDefaultLang.sh" >> /tmp/testsh
+	_EXEC echo "echo \$JUNE_CHEQUE_LANG" >> /tmp/testsh
+	
+	_EXPECT exec "^fr$"
+	_EXEC LANGUAGE=fr_CH bash /tmp/testsh
+
+	_EXEC echo "MY_PATH=." > /tmp/testsh
+	_EXEC echo "source ml/setDefaultLang.sh" >> /tmp/testsh
+	_EXEC echo "echo \$JUNE_CHEQUE_LANG" >> /tmp/testsh
+	
+	_EXPECT exec "^The langauge  en is not supported. Using fr"
+	_EXPECT exec "fr$"
+	_EXEC LANGUAGE=fr_CH JUNE_CHEQUE_LANG=en bash /tmp/testsh
+
+	_EXEC echo "MY_PATH=." > /tmp/testsh
+	_EXEC echo "source ml/setDefaultLang.sh" >> /tmp/testsh
+	_EXEC echo "echo \$JUNE_CHEQUE_LANG" >> /tmp/testsh
+	
+	_EXPECT exec "^fr$"
+	_EXEC LANGUAGE=xx_XX bash /tmp/testsh
+
+	_EXEC echo "MY_PATH=." > /tmp/testsh
+	_EXEC echo "source ml/setDefaultLang.sh" >> /tmp/testsh
+	_EXEC echo "echo \$JUNE_CHEQUE_LANG" >> /tmp/testsh
+	
+	_EXPECT exec "es$"
+	_EXEC LANGUAGE=fr_CH JUNE_CHEQUE_LANG=es bash /tmp/testsh
+
+	_EXEC echo "MY_PATH=." > /tmp/testsh
+	_EXEC echo "source ml/setDefaultLang.sh" >> /tmp/testsh
+	_EXEC echo "echo \$JUNE_CHEQUE_MAIN_LANG" >> /tmp/testsh
+	
+	_EXPECT exec "es$"
+	_EXEC LANGUAGE=fr_CH JUNE_CHEQUE_LANG=es_ES bash /tmp/testsh
+
+END
