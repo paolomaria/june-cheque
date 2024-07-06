@@ -23,9 +23,9 @@ CLIENT
 	_EXEC echo "source ml/setDefaultLang.sh" >> /tmp/testsh
 	_EXEC echo "echo \$JUNE_CHEQUE_LANG" >> /tmp/testsh
 	
-	_EXPECT exec "^The langauge  en is not supported. Using fr"
+	_EXPECT exec "^The langauge  xx is not supported. Using fr"
 	_EXPECT exec "fr$"
-	_EXEC LANGUAGE=fr_CH JUNE_CHEQUE_LANG=en bash /tmp/testsh
+	_EXEC LANGUAGE=fr_CH JUNE_CHEQUE_LANG=xx bash /tmp/testsh
 
 	_EXEC echo "MY_PATH=." > /tmp/testsh
 	_EXEC echo "source ml/setDefaultLang.sh" >> /tmp/testsh
