@@ -35,10 +35,12 @@ CLIENT
 		
 		_EXEC cd /tmp/artifact_$INDEX; unzip -o dummy.zip
 		
-		_MATCH exec "Identifiant secret: (.*)" SECRET_IDENTIFIER
-		_MATCH exec "Mot de passe: (.*)" SECRET_PW
-		_EXEC cat /tmp/artifact_$INDEX/*.enc | openssl enc -d -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY
-		
+		_MATCH exec "[^:]*: (.*)" SECRET_IDENTIFIER
+		_EXEC cat /tmp/artifact_$INDEX/*.enc | openssl enc -d -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY | tail -n+3 | head -1
+
+		_MATCH exec "[^:]*: (.*)" SECRET_PW
+		_EXEC cat /tmp/artifact_$INDEX/*.enc | openssl enc -d -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY | tail -n+4 | head -1
+
 		_EXEC python3 createKeyFile.py $SECRET_IDENTIFIER $SECRET_PW /tmp/artifact_$INDEX/authfile
 		
 		_MATCH exec "Total balance[.^|]| ([0-9])" BALANCE
