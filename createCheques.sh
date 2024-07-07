@@ -126,10 +126,16 @@ mkdir -p $outputDir
 
 ctr=$$
 nowFile=`date +"%Y%m%d%H%M%S"`
-outputFile=$outputDir"/cheque_"$nowFile"_"$ctr.txt
+if [ $simulate -ne 1 ]; then
+	filePrefix="cheque"
+else
+	filePrefix="simulation"
+fi
+
+outputFile=$outputDir"/$filePrefix_"$nowFile"_"$ctr.txt
 while [ -s $outputFile ]; do
 	ctr=$(($ctr + 1))
-	outputFile=$outputDir"/cheque_"$nowFile"_"$ctr.txt
+	outputFile=$outputDir"/$filePrefix_"$nowFile"_"$ctr.txt
 done
 
 > $outputFile
