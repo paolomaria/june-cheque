@@ -45,7 +45,7 @@ jobs:
 
     strategy:
       matrix:
-        cheque_language: [ fr, es ]
+        cheque_language: [ fr, es, en ]
 
     env:
       JUNE_CHEQUE_LANG: ${{ matrix.cheque_language }}

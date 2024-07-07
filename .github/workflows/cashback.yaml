@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        cheque_language: [ fr, es ]
+        cheque_language: [ fr, es, en ]
 
     steps:
 
