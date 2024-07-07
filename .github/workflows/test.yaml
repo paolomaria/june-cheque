@@ -91,7 +91,6 @@ jobs:
       run: |
         cd june-cheque
         printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 1 -n 1 -o test_script_check_${{ matrix.cheque_language }}
-        cat test_script_check_${{ matrix.cheque_language }}/*.txt
         cat test_script_check_${{ matrix.cheque_language }}/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > test_script_check_${{ matrix.cheque_language }}.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
@@ -159,7 +158,6 @@ jobs:
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       run: |
         printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o test_pkg_check_${{ matrix.cheque_language }}
-        cat test_pkg_check_${{ matrix.cheque_language }}/*.txt
         cat test_pkg_check_${{ matrix.cheque_language }}/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/test_pkg_check_${{ matrix.cheque_language }}.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
