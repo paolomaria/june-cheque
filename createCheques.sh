@@ -132,10 +132,10 @@ else
 	filePrefix="simulation"
 fi
 
-outputFile=$outputDir"/$filePrefix_"$nowFile"_"$ctr.txt
+outputFile=$outputDir"/"$filePrefix"_"$nowFile"_"$ctr.txt
 while [ -s $outputFile ]; do
 	ctr=$(($ctr + 1))
-	outputFile=$outputDir"/$filePrefix_"$nowFile"_"$ctr.txt
+	outputFile=$outputDir"/"$filePrefix"_"$nowFile"_"$ctr.txt
 done
 
 > $outputFile
