@@ -43,6 +43,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: unit_tests
 
+    strategy:
+      matrix:
+        cheque_language: [ fr, es, en ]
+
+    env:
+      JUNE_CHEQUE_LANG: ${{ matrix.cheque_language }}
+
     steps:
 
     - name: Checkout the june-cheque repo
@@ -73,8 +80,8 @@ jobs:
     - name: run simulation
       run: |
         cd june-cheque
-        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 10 -n 5 -o dummyChecks -s
-        cat dummyChecks/*.txt
+        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 10 -n 5 -o dummyChecks_${{ matrix.cheque_language }} -s
+        cat dummyChecks_${{ matrix.cheque_language }}/*.txt
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
@@ -83,24 +90,30 @@ jobs:
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       run: |
         cd june-cheque
-        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 1 -n 1 -o test_script_check
-        cat test_script_check/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > test_script_check.txt.enc
+        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 1 -n 1 -o test_script_check_${{ matrix.cheque_language }}
+        cat test_script_check_${{ matrix.cheque_language }}/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > test_script_check_${{ matrix.cheque_language }}.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
-        JUNE_CHEQUE_LANG: fr
 
     - name: archive encoded cheque
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       uses: actions/upload-artifact@v4
       with:
-        name: script-checks
-        path: june-cheque/test_script_check.txt.enc
+        name: script-checks-${{ matrix.cheque_language }}
+        path: june-cheque/test_script_check_${{ matrix.cheque_language }}.txt.enc
           
   test_pkg:
     runs-on: ubuntu-latest
     needs: test_script
+
+    strategy:
+      matrix:
+        cheque_language: [ fr, es, en ]
+
+    env:
+      JUNE_CHEQUE_LANG: ${{ matrix.cheque_language }}
 
     steps:
 
@@ -135,8 +148,8 @@ jobs:
 
     - name: run simulation
       run: |
-        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 10 -n 5 -o dummyChecks -s
-        cat dummyChecks/*.txt
+        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 10 -n 5 -o dummyChecks_${{ matrix.cheque_language }} -s
+        cat dummyChecks_${{ matrix.cheque_language }}/*.txt
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
@@ -144,20 +157,19 @@ jobs:
     - name: run transfer
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       run: |
-        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o test_pkg_check
-        cat test_pkg_check/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/test_pkg_check.txt.enc
+        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o test_pkg_check_${{ matrix.cheque_language }}
+        cat test_pkg_check_${{ matrix.cheque_language }}/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/test_pkg_check_${{ matrix.cheque_language }}.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
-        JUNE_CHEQUE_LANG: fr
 
     - name: archive encoded cheque
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       uses: actions/upload-artifact@v4
       with:
-        name: pkg-checks
-        path: june-cheque/test_pkg_check.txt.enc
+        name: pkg-checks-${{ matrix.cheque_language }}
+        path: june-cheque/test_pkg_check_${{ matrix.cheque_language }}.txt.enc
 
   release_package:
     runs-on: ubuntu-latest
