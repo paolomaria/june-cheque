@@ -63,4 +63,10 @@ for f in ml/chequeText.??; do
 		echo "The transaltion of VALUE_TXT is missing in $f"
 		exit 1
 	fi
+	unset CHEQUE_TEXT_COMMENT
+	source $f
+	if [ -z "$CHEQUE_TEXT_COMMENT" ]; then
+		echo "The transaltion of CHEQUE_TEXT_COMMENT is missing in $f"
+		exit 1
+	fi
 done

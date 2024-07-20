@@ -1,0 +1,52 @@
+function show_usage {
+  if [ $VERSION != "__VERS""ION__" ]; then
+  	echo "$0, version $VERSION"
+  fi
+  echo "Usage: $0 -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>] "
+  echo "    -s: simulate only. Don't tranfer any money."
+  echo "    -c: default is '$JUNE_CHEQUE_WEBLINK' (env variable JUNE_CHEQUE_WEBLINK)."
+  echo "    -o: default is '$JUNE_CHEQUE_HOME' (env variable JUNE_CHEQUE_HOME)."
+  echo "    The language of the cheques is '$JUNE_CHEQUE_LANG' (env variable JUNE_CHEQUE_LANG)."
+}
+
+function show_dep_text {
+	echo 'Checking presence of the required shell programs (openssl, python3, srm, silkaj)...'
+}
+
+CLI_NO_SW_INSTALLED_ERROR="Error: %s is not present on your system. Please install it and run this script again."
+
+CLI_NO_JAKLIS_NOTICE="Notice: jaklis is not present on your system. Cheques can only be issued from member accounts"
+
+CLI_ERROR_AMOUNT_NOT_POSITIVE="Amount must be a positive number"
+
+CLI_ERROR_NUMBER_OF_CH_NOT_POSITIVE="Number of cheques must be a positive number"
+
+CLI_ERROR_AMOUNT_MAX="Amount can be maximal %d"
+
+CLI_ERROR_NUMBER_OF_CH_MAX="Number of cheques can be maximal %d"
+
+CLI_SECRET_ID="Secret identifier"
+
+CLI_SECRET_PW="Password"
+
+CLI_NO_PSEUDO_FOUND="No Pseudo found for address %s"
+
+CLI_NO_PSEUDO_NOR_TITLE_FOUND="Neither a Pseudo nor a title found for address %s"
+
+CLI_TRANSFER_COMFIRM_LINE_1="IMPORTANT: the amount of %d Junes will be tranfered from the following accout:"
+
+CLI_TRANSFER_COMFIRM_LINE_2="Pseudo or Title: %s"
+
+CLI_TRANSFER_COMFIRM_LINE_3="Public Key: %s"
+
+CLI_TRANSFER_COMFIRM_LINE_4="The secret identifier and password will be stored in the file %s. If you loose this file the money will be lost"
+
+CLI_TRANSFER_PROCEED="Proceed (%s/%s)"
+
+CLI_TRANSFER_PROCEED_YES="Y"
+
+CLI_TRANSFER_PROCEED_NO="N"
+
+CLI_TRANSFER_STOPPED_BY_USER="Transaction has been stopped by the user"
+
+CLI_TRANSFER_FINISHED="The file '%s' has been successfully created. It contains the %d cheque(s). Keep this file until the money has been cashed or the money will be lost."

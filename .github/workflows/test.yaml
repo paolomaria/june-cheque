@@ -46,9 +46,11 @@ jobs:
     strategy:
       matrix:
         cheque_language: [ fr, es, en ]
+        cli_language: [ fr, en ]
 
     env:
       JUNE_CHEQUE_LANG: ${{ matrix.cheque_language }}
+      LANGUAGE: ${{ matrix.cli_language }}
 
     steps:
 
@@ -111,9 +113,11 @@ jobs:
     strategy:
       matrix:
         cheque_language: [ fr, es, en ]
+        cli_language: [ fr, es, en ]
 
     env:
       JUNE_CHEQUE_LANG: ${{ matrix.cheque_language }}
+      LANGUAGE: ${{ matrix.cli_language }}
 
     steps:
 
