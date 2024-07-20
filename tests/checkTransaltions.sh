@@ -67,6 +67,23 @@ for f in ml/chequeText.??; do
 	source $f
 	if [ -z "$CHEQUE_TEXT_COMMENT" ]; then
 		echo "The transaltion of CHEQUE_TEXT_COMMENT is missing in $f"
+
+	unset CREATED_THE_TXT
+	source $f
+	if [ -z "$CREATED_THE_TXT" ]; then
+		echo "The transaltion of CREATED_THE_TXT is missing in $f"
+		exit 1
+	fi
+	unset PSEUDO_TXT
+	source $f
+	if [ -z "$PSEUDO_TXT" ]; then
+		echo "The transaltion of PSEUDO_TXT is missing in $f"
+		exit 1
+	fi
+	unset TO_PAY_TEXT
+	source $f
+	if [ -z "$TO_PAY_TEXT" ]; then
+		echo "The transaltion of TO_PAY_TEXT is missing in $f"
 		exit 1
 	fi
 done

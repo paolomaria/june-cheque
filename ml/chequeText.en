@@ -9,3 +9,6 @@ FINAL_CHEQUE_TXT="To cash the cheque connect%swith the secret identifier and the
 WEBLINK_TEXT="(for exemple on the site %s) "
 VALUE_TXT="Value"
 CHEQUE_TEXT_COMMENT="Cheque issued on %s"
+CREATED_THE_TXT="Created the"
+PSEUDO_TXT="Pseudo"
+TO_PAY_TEXT="To pay"
