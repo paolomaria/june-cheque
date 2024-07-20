@@ -92,7 +92,9 @@ jobs:
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       run: |
         cd june-cheque
-        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 1 -n 1 -o test_script_check_${{ matrix.cheque_language }}
+        YES_VALUE=`grep CLI_TRANSFER_PROCEED_YES ml/cliText.$LANGUAGE | sed -E 's/[^"]*"([^"]*).*/\1/g'`
+        echo "YES_VALUE=$YES_VALUE"
+        printf "%s\n%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY $YES_VALUE | ./createCheques.sh -a 1 -n 1 -o test_script_check_${{ matrix.cheque_language }}
         cat test_script_check_${{ matrix.cheque_language }}/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > test_script_check_${{ matrix.cheque_language }}.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
