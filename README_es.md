@@ -13,7 +13,7 @@ Una de la principales desventajas de June es que se necesita un ordenador o un m
 
 Con este CLI se pueden crear June cheques que luego se pueden imprimir en papel y darlo a la persona a la que desea enviar algunos June. Las informaciones de identificación para recibir el pago se escriben en el cheque.
 
-**IMPORTANTE**: esta CLI es todavía experimental. ¡¡Úsela bajo sus propio riesgos !!
+**IMPORTANTE**: ¡¡ esta CLI es todavía experimental. ¡¡Úsela bajo sus propio riesgos !!
 
 ## Instalación
 
