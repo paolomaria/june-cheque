@@ -90,7 +90,7 @@ jobs:
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
 
     - name: run transfer
-      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      if: ${{ github.event.inputs.do-real-transfer == 'true' && matrix.cheque_language == 'fr' && matrix.cli_language == 'fr' }}
       run: |
         cd june-cheque
         YES_VALUE=`grep CLI_TRANSFER_PROCEED_YES ml/cliText.$LANGUAGE | sed -E 's/[^"]*"([^"]*).*/\1/g'`
@@ -104,7 +104,7 @@ jobs:
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
 
     - name: archive encoded cheque
-      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      if: ${{ github.event.inputs.do-real-transfer == 'true' && matrix.cheque_language == 'fr' && matrix.cli_language == 'fr' }}
       uses: actions/upload-artifact@v4
       with:
         name: script-checks-${{ matrix.cheque_language }}-${{ matrix.cli_language }}
@@ -164,11 +164,9 @@ jobs:
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
 
     - name: run transfer
-      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      if: ${{ github.event.inputs.do-real-transfer == 'true' && matrix.cheque_language == 'en' && matrix.cli_language == 'en' }}
       run: |
-        YES_VALUE=`grep CLI_TRANSFER_PROCEED_YES ml/cliText.$LANGUAGE | sed -E 's/[^"]*"([^"]*).*/\1/g'`
-        echo "YES_VALUE=$YES_VALUE"
-        printf "%s\n%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY $YES_VALUE | june-cheque-create -a 1 -n 1 -o test_pkg_check_${{ matrix.cheque_language }}
+        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o test_pkg_check_${{ matrix.cheque_language }}
         cat test_pkg_check_${{ matrix.cheque_language }}/*.txt
         cat test_pkg_check_${{ matrix.cheque_language }}/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/test_pkg_check_${{ matrix.cheque_language }}.txt.enc
       env:
@@ -177,7 +175,7 @@ jobs:
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
 
     - name: archive encoded cheque
-      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      if: ${{ github.event.inputs.do-real-transfer == 'true' && matrix.cheque_language == 'en' && matrix.cli_language == 'en' }}
       uses: actions/upload-artifact@v4
       with:
         name: pkg-checks-${{ matrix.cheque_language }}-${{ matrix.cli_language }}
