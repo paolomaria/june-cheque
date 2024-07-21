@@ -1,4 +1,4 @@
-[<img src="https://github.com/paolomaria/june-cheque-app/raw/main/www/img/flag-gb.png">](https://github.com/paolomaria/june-cheque/blob/main/README.md)
+[<img src="https://github.com/paolomaria/june-cheque-app/raw/main/www/img/flag-gb.png">](README.md)
 
 ![June Cheque logo](https://github.com/paolomaria/june-cheque-app/raw/main/www/img/logo_144px.png)
 
