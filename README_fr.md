@@ -18,8 +18,8 @@ Avec cette CLI vous pouvez créer des chèques June qui pourront être imprimés
 
  - Téléchargez et installez le dernier paquet en suivant le lien https://github.com/paolomaria/june-cheque/releases
  ```
-wget https://github.com/paolomaria/june-cheque/releases/download/release/2.2/june-cheque.2.2.deb
-sudo apt-get install ./june-cheque.2.2.deb
+wget https://github.com/paolomaria/june-cheque/releases/download/release/2.3/june-cheque.2.3.deb
+sudo apt-get install ./june-cheque.2.3.deb
  ```
  
  - installez silkaj:
