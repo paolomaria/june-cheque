@@ -12,6 +12,7 @@ jobs:
     timeout-minutes: 5
 
     strategy:
+      fail-fast: false
       matrix:
         cheque_language: [ fr, es, en ]
         cli_language: [ fr, en ]
@@ -60,5 +61,5 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: httest-log-${{ matrix.cheque_language }}
+        name: httest-log-${{ matrix.cheque_language }}-${{ matrix.cli_language }}
         path: june-cheque/httest.log.enc
