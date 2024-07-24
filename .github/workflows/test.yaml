@@ -157,7 +157,7 @@ jobs:
 
     - name: run simulation
       run: |
-        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 10 -n 5 -o dummyChecks_${{ matrix.cheque_language }} -s
+        printf "%s\n%s\n" ${GITHUBACCOUNT_IDENTIFIER}_${{ matrix.cheque_language }} ${GITHUBACCOUNT_KEY}_${{ matrix.cli_language }} | ./createCheques.sh -a 10 -n 5 -o dummyChecks_${{ matrix.cheque_language }} -s
         cat dummyChecks_${{ matrix.cheque_language }}/*.txt
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
