@@ -29,7 +29,7 @@ jobs:
         tfile=$(mktemp  /tmp/.XXXXXXXXX)
         chmod 600 $tfile
         python3 ./save_and_load_private_key_file_pubsec.py "${GITHUBACCOUNT_IDENTIFIER}" "${GITHUBACCOUNT_KEY}" "$tfile"
-        silkaj -af --file "$tfile" money transfer -a 1 -r "DR6uUwvcfxJZvw6mi4KQny5Ex7eiNTAfzgMw15DG1WLG:HAe" -r "7t6q4v6khqCSDguucuU2iBhyE3vM53vLb82QaERvdNYt:DNA" -r "HjFVXVsoyvJ9FoLq8i6XLchtnTBVtqRCqgYtvB6vgipA:DsM" -r "3Yir21RRKoy2DFTnzCsbCYnsuLmVLfCbh8kiHoD9cjkp:ErQ" -r "EY1EX78TxeahmPxttQVYMKiiQE4N23mEB9BgnnfsifRH:6Wm" -r "5P1pNny2x6tHvbP7UV8HkQL4YnBkfJVgcwsSfVjyMgHG:Aaw"
+        silkaj -af --file "$tfile" money transfer -a 1 -r "DR6uUwvcfxJZvw6mi4KQny5Ex7eiNTAfzgMw15DG1WLG:HAe" -r "7t6q4v6khqCSDguucuU2iBhyE3vM53vLb82QaERvdNYt:DNA" -r "HjFVXVsoyvJ9FoLq8i6XLchtnTBVtqRCqgYtvB6vgipA:DsM" -r "3Yir21RRKoy2DFTnzCsbCYnsuLmVLfCbh8kiHoD9cjkp:ErQ" -r "EY1EX78TxeahmPxttQVYMKiiQE4N23mEB9BgnnfsifRH:6Wm" -r "5P1pNny2x6tHvbP7UV8HkQL4YnBkfJVgcwsSfVjyMgHG:Aaw" -y
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
