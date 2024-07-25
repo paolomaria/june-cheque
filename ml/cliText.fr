@@ -1,0 +1,52 @@
+function show_usage {
+  if [ $VERSION != "__VERS""ION__" ]; then
+  	echo "$0, version $VERSION"
+  fi
+  echo "Utilisation: $0 -n <nombre de chèques> -a <montant de chaque chèque> [-s] [ -o <répertoire de sortie>> ] [-c <lien vers le site web utilisant cesium ou un logiciel similaire>] "
+  echo "    -s: seulement une simulation. Ne transférez pas d'argent."
+  echo "    -c: par défaut '$JUNE_CHEQUE_WEBLINK' (la variable d'environnement JUNE_CHEQUE_WEBLINK)."
+  echo "    -o: par défaut '$JUNE_CHEQUE_HOME' (la variable d'environnement JUNE_CHEQUE_HOME)."
+  echo "    La langue du chèque est '$JUNE_CHEQUE_LANG' (la variable d'environnement JUNE_CHEQUE_LANG)."
+}
+
+function show_dep_text {
+	echo 'Vérification de la présence des programmes (openssl, python3, sem, silkaj)...'
+}
+
+CLI_NO_SW_INSTALLED_ERROR="Erreur : %s n'est pas présent dans votre système. Veuillez l'installer et exécuter à nouveau ce script."
+
+CLI_NO_JAKLIS_NOTICE="Notice: Remarque : jaklis n'est pas présent dans votre système. Les chèques ne peuvent être émis que par des comptes membres"
+
+CLI_ERROR_AMOUNT_NOT_POSITIVE="Le montant doit être un nombre positif"
+
+CLI_ERROR_NUMBER_OF_CH_NOT_POSITIVE="Le nombre de chèque doit être un nombre positif"
+
+CLI_ERROR_AMOUNT_MAX="La valeur maximale du montant est %d"
+
+CLI_ERROR_NUMBER_OF_CH_MAX="Le nombre de chèques peut être maximal %d"
+
+CLI_SECRET_ID="Identifiant secret"
+
+CLI_SECRET_PW="Mot de passe"
+
+CLI_NO_PSEUDO_FOUND="Aucun Pseudo trouvé pour l'adresse %s"
+
+CLI_NO_PSEUDO_NOR_TITLE_FOUND="Ni Pseudo ni titre trouvés pour l'adresse %s"
+
+CLI_TRANSFER_COMFIRM_LINE_1="IMPORTANT : le montant %d Junes va être transféré depuis le compte suivant:"
+
+CLI_TRANSFER_COMFIRM_LINE_2="Pseudo ou titre: %s"
+
+CLI_TRANSFER_COMFIRM_LINE_3="Clé publique: %s"
+
+CLI_TRANSFER_COMFIRM_LINE_4="L'identifiant secret et le mot de passe seront stockés dans le fichier %s. Si vous perdez ce fichier, l'argent sera perdu"
+
+CLI_TRANSFER_PROCEED="Poursuivre (%s/%s)"
+
+CLI_TRANSFER_PROCEED_YES="O"
+
+CLI_TRANSFER_PROCEED_NO="N"
+
+CLI_TRANSFER_STOPPED_BY_USER="La transaction a été arrêtée par l'utilisateur"
+
+CLI_TRANSFER_FINISHED="Le fichier %s a été créé avec succès. Il contient %d chèque(s).  Gardez ce fichier jusqu'à ce que l'argent ait été encaissé ou l'argent sera perdu."

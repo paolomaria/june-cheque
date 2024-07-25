@@ -6,6 +6,7 @@ MY_BIN_PATH=.
 VERSION="__VERSION__"
 
 source $MY_PATH/ml/setDefaultLang.sh
+source $MY_PATH/ml/cliText.${SHELL_MAIN_LAGUAGE}
 
 if [ -f $MY_PATH/ml/chequeText.$JUNE_CHEQUE_MAIN_LANG ]; then
 	source $MY_PATH/ml/chequeText.$JUNE_CHEQUE_MAIN_LANG
@@ -24,34 +25,30 @@ fi
 #echo "JUNE_CHEQUE_LANG=$JUNE_CHEQUE_LANG"
 #echo "JUNE_CHEQUE_MAIN_LANG=$JUNE_CHEQUE_MAIN_LANG"
 
-function show_dep_text {
-	echo 'Checking presence of the required shell programs (openssl, python3, srm, silkaj)...'
-}
-
 hasJaklis=1
 
 if ! [ -x "$(command -v openssl)" ]; then
 	show_dep_text
-    echo 'Error: openssl is not present on your system. Please install it and run this script again.'
+	printf "$CLI_NO_SW_INSTALLED_ERROR\n" "openssl"
     exit 1
 fi
 if ! [ -x "$(command -v python3)" ]; then
 	show_dep_text
-    echo 'Error: python3 is not present on your system. Please install it and run this script again.'
+	printf "$CLI_NO_SW_INSTALLED_ERROR\n" "python3"
     exit 1
 fi
 if ! [ -x "$(command -v srm)" ]; then
 	show_dep_text
-    echo 'Error: srm is not present on your system. Please install it and run this script again.'
+	printf "$CLI_NO_SW_INSTALLED_ERROR\n" "srm"
     exit 1
 fi
 if ! [ -x "$(command -v silkaj)" ]; then
 	show_dep_text
-    echo 'Error: silkaj is not present on your system. Please install it and run this script again.'
+	printf "$CLI_NO_SW_INSTALLED_ERROR\n" "silkaj"
     exit 1
 fi
 if ! [ -x "$(command -v jaklis)" ]; then
-    echo 'Notice: jaklis is not present on your system. Cheques can only be issued from member accounts.'
+    echo "${CLI_NO_JAKLIS_NOTICE}."
 	hasJaklis=0
 fi
 
@@ -66,17 +63,6 @@ weblink=$JUNE_CHEQUE_WEBLINK
 outputDir=$JUNE_CHEQUE_HOME
 
 now=`date +"%d/%m/%Y"`
-
-function show_usage {
-  if [ $VERSION != "__VERS""ION__" ]; then
-  	echo "$0, version $VERSION"
-  fi
-  echo "Usage: $0 -n <number of cheques> -a <amount of each cheques> [-s] [ -o <output directory> ] [-c <link to website running cesium or similar>] "
-  echo "    -s: simulate only. Don't tranfer any money."
-  echo "    -c: default is '$JUNE_CHEQUE_WEBLINK' (env variable JUNE_CHEQUE_WEBLINK)."
-  echo "    -o: default is '$JUNE_CHEQUE_HOME' (env variable JUNE_CHEQUE_HOME)."
-  echo "    The language of the cheques is '$JUNE_CHEQUE_LANG' (env variable JUNE_CHEQUE_LANG)."
-}
 
 while getopts "ha:n:so:c:" opt; do
   case "$opt" in
@@ -103,22 +89,22 @@ if [ $amount == "none" -o $number == "none" ]; then
 fi
 
 if ! [[ "$amount" =~ ^[1-9][0-9]*$ ]]; then
-	echo "Amount must be a positive number"
+	echo "$CLI_ERROR_AMOUNT_NOT_POSITIVE"
 	exit 1
 fi
 
 if ! [[ "$number" =~ ^[1-9][0-9]*$ ]]; then
-	echo "Number of cheques must be a positive number"
+	echo "$CLI_ERROR_NUMBER_OF_CH_NOT_POSITIVE"
 	exit 1
 fi
 
 if [ $amount -gt 100 ]; then
-	echo "Amount can be maximal 100"
+	printf "$CLI_ERROR_AMOUNT_MAX\n" 100
 	exit 1
 fi
 
 if [ $number -gt 10 ]; then
-	echo "Number of cheques can be maximal 10"
+	printf "$CLI_ERROR_NUMBER_OF_CH_MAX\n" 10
 	exit 1
 fi
 
@@ -143,9 +129,9 @@ chmod 600 $outputFile
 
 totalAmount=$(( $amount * $number ))
 
-read -sp 'Secret identifier: ' secretId
+read -sp "$CLI_SECRET_ID: " secretId
 echo
-read -sp 'Password: ' secretPw
+read -sp "$CLI_SECRET_PW: " secretPw
 echo
 
 owners_lookup_failed=0
@@ -157,7 +143,7 @@ owners_lookup=`silkaj  wot lookup $owners_pubkey` || owners_lookup_failed=1
 if [ $owners_lookup_failed -ne 1 ]; then
 	ownersPseudo=`echo "$owners_lookup" | awk -v d="" '{s=(NR==1?s:s d)$0}END{print s}'| awk -F " " '{print $NF}'`
 elif [ $hasJaklis -ne 1 ]; then
-	echo "No Pseudo found for address $owners_pubkey";
+	printf "$CLI_NO_PSEUDO_FOUND\n" "$owners_pubkey"
 	exit 1;
 else
 	noProfileFound=0
@@ -167,31 +153,32 @@ else
 	profile=`jaklis -k $pubKeyFile  get` || noProfileFound=1
 	srm $pubKeyFile
 	if [ $noProfileFound -ne 0 ]; then
-		echo "Neither a Pseudo nor a title found for address $owners_pubkey";
+		printf "$CLI_NO_PSEUDO_NOR_TITLE_FOUND\n" "$owners_pubkey"
 		exit 1;
 	fi
 	echo $profile | grep '"title"' || noProfileFound=1
 	if [ $noProfileFound -ne 0 ]; then
-		echo "Neither a Pseudo nor a title found for address $owners_pubkey";
+		printf "$CLI_NO_PSEUDO_NOR_TITLE_FOUND\n" "$owners_pubkey"
 		exit 1;
 	fi	
 	ownersPseudo=`echo $profile | sed -E "s/.*\"title\": \"([^\"]*).*/\1/g"`
 	if [ "$profile" = "$ownersPseudo" ]; then
-		echo "Neither a Pseudo nor a title found for address $owners_pubkey";
+		printf "$CLI_NO_PSEUDO_NOR_TITLE_FOUND\n" "$owners_pubkey"
 		exit 1;
 	fi
 fi
 
 
 if [ $simulate -ne 1 ]; then
-	echo "IMPORTANT: the amount of $totalAmount Junes will be tranfered from the following accout:"
-	echo "    Pseudo or Title: $ownersPseudo"
-	echo "    Public Key: $owners_pubkey"
-	echo "The secret identifier and password will be stored in the file $outputFile. If you loose this file the money will be lost"
-	read -p 'Proceed (Y/N): ' proceed
+	printf "$CLI_TRANSFER_COMFIRM_LINE_1\n" $totalAmount
+	printf "    $CLI_TRANSFER_COMFIRM_LINE_2\n" "$ownersPseudo"
+	printf "    $CLI_TRANSFER_COMFIRM_LINE_3\n" "$owners_pubkey"
+	printf "$CLI_TRANSFER_COMFIRM_LINE_4\n" "$outputFile"
+	PROCEED_TEXT=`printf "$CLI_TRANSFER_PROCEED" "$CLI_TRANSFER_PROCEED_YES" "$CLI_TRANSFER_PROCEED_NO"`
+	read -p "$PROCEED_TEXT: " proceed
 	echo
-	if [ "$proceed" != "Y" ]; then
-		echo "Transaction has been stopped by the user"
+	if [ "$proceed" != "$CLI_TRANSFER_PROCEED_YES" ]; then
+		echo "$CLI_TRANSFER_STOPPED_BY_USER"
 		rm $outputFile
 		exit 1
 	fi
@@ -227,7 +214,8 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 			pubKeyFile=$(mktemp  /tmp/.XXXXXXXXX)
 			chmod 600 $pubKeyFile
 			python3 ${MY_BIN_PATH}/save_and_load_private_key_file_pubsec.py  ${identifiant} $passFormatted $pubKeyFile
-			jaklis -k $pubKeyFile  set -d "Chèque June émis le $now" -A ${MY_PATH}/images/logo.png
+			chequeTextComment=`printf "$CHEQUE_TEXT_COMMENT" "$now"`
+			jaklis -k $pubKeyFile  set -d "$chequeTextComment" -A ${MY_PATH}/images/logo.png
 			srm $pubKeyFile
 		fi
 
@@ -247,6 +235,6 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 done
 
 echo
-echo "The file '$outputFile' has been successfully created. It contains the $number cheque(s). Keep this file until the money has been cashed or the money will be lost."
+printf "$CLI_TRANSFER_FINISHED\n" "$outputFile" $number
 
 

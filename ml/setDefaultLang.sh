@@ -10,6 +10,11 @@
 SHELL_LAGUAGE=$LANGUAGE
 SHELL_MAIN_LAGUAGE=`echo $SHELL_LAGUAGE | sed -E 's/^(..).*/\1/g'`
 
+if [ ! -f $MY_PATH/ml/cliText.$SHELL_MAIN_LAGUAGE ]; then
+	SHELL_MAIN_LAGUAGE=en
+	SHELL_LAGUAGE=en
+fi
+
 if [ -z $JUNE_CHEQUE_LANG ]; then
 	if [ -f $MY_PATH/ml/chequeText.$SHELL_LAGUAGE ]; then
 		JUNE_CHEQUE_LANG=$SHELL_LAGUAGE

@@ -49,10 +49,27 @@ ${PACKAGE_NAME}.deb:
 	make pkg-debi
 
 test:
+	${MAKE} httTest
+	${MAKE} checkChequeTranslations
+	${MAKE} checkCliTranslations
+
+httTest:
+	unset JUNE_CHEQUE_LANG; \
+	export MY_PATH=.; \
 	for f in tests/*.htt; do \
 		httest $$f; \
 		if [ $$? -ne 0 ]; then \
 			exit 1; \
 		fi \
 	done
+
+checkChequeTranslations:
 	./tests/checkTransaltions.sh
+
+checkCliTranslations:
+	for f in ml/cliText.??; do \
+		./tests/checkCliTranslation.sh $$f; \
+		if [ $$? -ne 0 ]; then \
+			exit 1; \
+		fi \
+	done

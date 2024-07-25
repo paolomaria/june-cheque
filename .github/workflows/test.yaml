@@ -44,11 +44,14 @@ jobs:
     needs: unit_tests
 
     strategy:
+      fail-fast: false
       matrix:
         cheque_language: [ fr, es, en ]
+        cli_language: [ fr, en ]
 
     env:
       JUNE_CHEQUE_LANG: ${{ matrix.cheque_language }}
+      LANGUAGE: ${{ matrix.cli_language }}
 
     steps:
 
@@ -80,7 +83,7 @@ jobs:
     - name: run simulation
       run: |
         cd june-cheque
-        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 10 -n 5 -o dummyChecks_${{ matrix.cheque_language }} -s
+        printf "%s\n%s\n" ${GITHUBACCOUNT_IDENTIFIER}_${{ matrix.cheque_language }} ${GITHUBACCOUNT_KEY}_${{ matrix.cli_language }} | ./createCheques.sh -a 10 -n 5 -o dummyChecks_${{ matrix.cheque_language }} -s
         cat dummyChecks_${{ matrix.cheque_language }}/*.txt
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
@@ -90,7 +93,10 @@ jobs:
       if: ${{ github.event.inputs.do-real-transfer == 'true' }}
       run: |
         cd june-cheque
-        printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | ./createCheques.sh -a 1 -n 1 -o test_script_check_${{ matrix.cheque_language }}
+        YES_VALUE=`grep CLI_TRANSFER_PROCEED_YES ml/cliText.$LANGUAGE | sed -E 's/[^"]*"([^"]*).*/\1/g'`
+        echo "YES_VALUE=$YES_VALUE"
+        printf "%s\n%s\n%s\n" ${GITHUBACCOUNT_IDENTIFIER}_${{ matrix.cheque_language }} ${GITHUBACCOUNT_KEY}_${{ matrix.cli_language }} $YES_VALUE | ./createCheques.sh -a 1 -n 1 -o test_script_check_${{ matrix.cheque_language }}
+        cat test_script_check_${{ matrix.cheque_language }}/*.txt
         cat test_script_check_${{ matrix.cheque_language }}/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > test_script_check_${{ matrix.cheque_language }}.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
@@ -98,10 +104,10 @@ jobs:
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
 
     - name: archive encoded cheque
-      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      if: ${{ github.event.inputs.do-real-transfer == 'true' && matrix.cheque_language == 'fr' && matrix.cli_language == 'fr' }}
       uses: actions/upload-artifact@v4
       with:
-        name: script-checks-${{ matrix.cheque_language }}
+        name: script-checks-${{ matrix.cheque_language }}-${{ matrix.cli_language }}
         path: june-cheque/test_script_check_${{ matrix.cheque_language }}.txt.enc
           
   test_pkg:
@@ -109,11 +115,14 @@ jobs:
     needs: test_script
 
     strategy:
+      fail-fast: false
       matrix:
         cheque_language: [ fr, es, en ]
+        cli_language: [ fr, en ]
 
     env:
       JUNE_CHEQUE_LANG: ${{ matrix.cheque_language }}
+      LANGUAGE: ${{ matrix.cli_language }}
 
     steps:
 
@@ -148,16 +157,17 @@ jobs:
 
     - name: run simulation
       run: |
-        printf "%s\n%s\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 10 -n 5 -o dummyChecks_${{ matrix.cheque_language }} -s
+        printf "%s\n%s\n" ${GITHUBACCOUNT_IDENTIFIER}_${{ matrix.cheque_language }} ${GITHUBACCOUNT_KEY}_${{ matrix.cli_language }} | june-cheque-create -a 10 -n 5 -o dummyChecks_${{ matrix.cheque_language }} -s
         cat dummyChecks_${{ matrix.cheque_language }}/*.txt
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
         GITHUBACCOUNT_KEY: ${{ secrets.GITHUBACCOUNT_KEY }}
 
     - name: run transfer
-      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      if: ${{ github.event.inputs.do-real-transfer == 'true' && matrix.cheque_language == 'en' && matrix.cli_language == 'en' }}
       run: |
         printf "%s\n%s\nY\n" $GITHUBACCOUNT_IDENTIFIER $GITHUBACCOUNT_KEY | june-cheque-create -a 1 -n 1 -o test_pkg_check_${{ matrix.cheque_language }}
+        cat test_pkg_check_${{ matrix.cheque_language }}/*.txt
         cat test_pkg_check_${{ matrix.cheque_language }}/*.txt | openssl enc -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > june-cheque/test_pkg_check_${{ matrix.cheque_language }}.txt.enc
       env:
         GITHUBACCOUNT_IDENTIFIER: ${{ secrets.GITHUBACCOUNT_IDENTIFIER }}
@@ -165,10 +175,10 @@ jobs:
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
 
     - name: archive encoded cheque
-      if: ${{ github.event.inputs.do-real-transfer == 'true' }}
+      if: ${{ github.event.inputs.do-real-transfer == 'true' && matrix.cheque_language == 'en' && matrix.cli_language == 'en' }}
       uses: actions/upload-artifact@v4
       with:
-        name: pkg-checks-${{ matrix.cheque_language }}
+        name: pkg-checks-${{ matrix.cheque_language }}-${{ matrix.cli_language }}
         path: june-cheque/test_pkg_check_${{ matrix.cheque_language }}.txt.enc
 
   release_package:

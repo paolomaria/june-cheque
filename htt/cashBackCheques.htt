@@ -47,7 +47,7 @@ CLIENT
 		_EXEC silkaj -af --file /tmp/artifact_$INDEX/authfile money balance | grep 'Total balance'
 		
 		_IF $BALANCE GT 0
-			_EXEC silkaj -af --file /tmp/artifact_$INDEX/authfile money transfer -a $BALANCE -r EZPRNCiZhTbbgMZqpTA37btzUsQ45BY9QfTdtUT5tZBr:Chz -c "cashback" -y
+			_EXEC silkaj -af --file /tmp/artifact_$INDEX/authfile money transfer -a $BALANCE -r 7a3f363wyA1rLgiYGiB796xrubjp9c8WvuB3y8oRR1PD:HZx -c "cashback" -y
 		_ELSE
 			_EXEC echo "NO TRANSFER"
 		_END

@@ -12,8 +12,10 @@ jobs:
     timeout-minutes: 5
 
     strategy:
+      fail-fast: false
       matrix:
         cheque_language: [ fr, es, en ]
+        cli_language: [ fr, en ]
 
     steps:
 
@@ -35,7 +37,7 @@ jobs:
     - name: do the cashback of the script checks
       run: |
         cd june-cheque
-        ARTIFACT_NAME=script-checks-${{ matrix.cheque_language }} httest htt/cashBackCheques.htt > httest.log
+        ARTIFACT_NAME=script-checks-${{ matrix.cheque_language }}-${{ matrix.cli_language }} httest htt/cashBackCheques.htt > httest.log
       env:
         GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
@@ -43,7 +45,7 @@ jobs:
     - name: do the cashback of the pkg checks
       run: |
         cd june-cheque
-        ARTIFACT_NAME=pkg-checks-${{ matrix.cheque_language }} httest htt/cashBackCheques.htt >> httest.log
+        ARTIFACT_NAME=pkg-checks-${{ matrix.cheque_language }}-${{ matrix.cli_language }} httest htt/cashBackCheques.htt >> httest.log
       env:
         GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
@@ -59,5 +61,5 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: httest-log-${{ matrix.cheque_language }}
+        name: httest-log-${{ matrix.cheque_language }}-${{ matrix.cli_language }}
         path: june-cheque/httest.log.enc
