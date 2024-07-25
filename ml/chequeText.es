@@ -9,3 +9,6 @@ FINAL_CHEQUE_TXT="Para cobrar este cheque regístrese%scon el usuario secreto y 
 WEBLINK_TEXT="(por ejemplo mediante la página web %s) "
 VALUE_TXT="Valor"
 CHEQUE_TEXT_COMMENT="Cheque June expedido el %s"
+CREATED_THE_TXT="Created the"
+PSEUDO_TXT="Pseudo"
+TO_PAY_TEXT="To pay"

@@ -9,3 +9,6 @@ FINAL_CHEQUE_TXT="Pour encaisser ce chèque enregistrez-vous%savec l'identifiant
 WEBLINK_TEXT="(par exemple via le site %s) "
 VALUE_TXT="Valeur"
 CHEQUE_TEXT_COMMENT="Chèque June émis le %s"
+CREATED_THE_TXT="Creé le"
+PSEUDO_TXT="Pseudo"
+TO_PAY_TEXT="A payer"
