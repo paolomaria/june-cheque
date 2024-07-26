@@ -34,6 +34,12 @@ jobs:
         pip3 install silkaj
         sudo apt-get install httest
 
+    - name: install jaklis
+      run: |
+        git clone https://git.p2p.legal/axiom-team/jaklis.git
+        cd jaklis
+        bash setup.sh
+
     - name: do the cashback of the script checks
       run: |
         cd june-cheque
