@@ -20,7 +20,6 @@ for f in /tmp/cheque_*.txt; do
 			echo "NO TRANSFER, no money"
 		else
 			echo "DOIT"
-			#exit 1
 			silkaj -af --file /tmp/authfile money transfer -a 1 -r AdhCJj8Cz8amRpL57rXpzJmpxyebpYENAyihMyhH1Dhm -c "cashback" -y
 			#jaklis -k /tmp/authfile pay -a $BALANCE -p AdhCJj8Cz8amRpL57rXpzJmpxyebpYENAyihMyhH1Dhm -c "cashback"
 		fi
