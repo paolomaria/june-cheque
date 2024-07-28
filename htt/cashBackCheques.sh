@@ -27,5 +27,6 @@ for f in /tmp/cheque_*.txt; do
 	done 
 done
 
-\rm x??
+rm -f x??
 
+rm -f /tmp/cheque_*.txt
