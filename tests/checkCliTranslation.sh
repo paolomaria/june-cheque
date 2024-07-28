@@ -103,3 +103,8 @@ if [ -z "$CLI_TRANSFER_FINISHED" ]; then
 	exit 1
 fi
 
+if [ -z "$CLI_CHECKBOOK" ]; then
+	echo "The translation of CLI_CHECKBOOK is missing in $FILE_TO_CHECK"
+	exit 1
+fi
+
