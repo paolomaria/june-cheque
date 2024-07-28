@@ -235,7 +235,7 @@ if [ $simulate -ne 1 ]; then
 	tfile=$(mktemp  /tmp/.XXXXXXXXX)
 	chmod 600 $tfile
 	python3 ${MY_BIN_PATH}/createKeyFile.py "$secretId" "$secretPw" "$tfile"
-	silkaj -af --file "$tfile" money transfer -a $amount $receivers -c "$CLI_CHECKBOOK" -y
+	silkaj -af --file "$tfile" money transfer -a $amount $receivers -c "June-cheque" -y
 	srm $tfile
 	touch $outputFile.tmp
 	chmod 600 $outputFile.tmp
