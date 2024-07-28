@@ -50,3 +50,5 @@ CLI_TRANSFER_PROCEED_NO="N"
 CLI_TRANSFER_STOPPED_BY_USER="La transaction a été arrêtée par l'utilisateur"
 
 CLI_TRANSFER_FINISHED="Le fichier %s a été créé avec succès. Il contient %d chèque(s).  Gardez ce fichier jusqu'à ce que l'argent ait été encaissé ou l'argent sera perdu."
+
+CLI_CHECKBOOK="chéquier"

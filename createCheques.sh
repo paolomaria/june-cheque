@@ -184,6 +184,7 @@ if [ $simulate -ne 1 ]; then
 	fi
 fi
 
+receivers=""
 
 name=`openssl rand -base64 4 | sed -e "s@/@a@g" -e "s/\+/z/g" -e "s/=//g" -e "s/^.//g"`
 
@@ -219,12 +220,8 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 			srm $pubKeyFile
 		fi
 
-		tfile=$(mktemp  /tmp/.XXXXXXXXX)
-		chmod 600 $tfile
-		python3 ${MY_BIN_PATH}/createKeyFile.py "$secretId" "$secretPw" "$tfile"
-		silkaj -af --file "$tfile" money transfer -a $amount -r "$pubkey" -c "cheque  $pubkey" -y
-		srm $tfile
-		echo "  $VALUE_TXT: $amount June." >> $outputFile
+		receivers="$receivers -r $pubkey"
+		echo "  $VALUE_TXT: __000__ June." >> $outputFile
 	else
 		echo "  $VALUE_TXT: $NO_VALUE_TXT." >> $outputFile
 	fi
@@ -233,6 +230,18 @@ for (( i = 0 ; $i < $number; i = $i + 1)) ; do
 	echo >> $outputFile
 	
 done
+
+if [ $simulate -ne 1 ]; then
+	tfile=$(mktemp  /tmp/.XXXXXXXXX)
+	chmod 600 $tfile
+	python3 ${MY_BIN_PATH}/createKeyFile.py "$secretId" "$secretPw" "$tfile"
+	silkaj -af --file "$tfile" money transfer -a $amount $receivers -c "June-cheque" -y
+	srm $tfile
+	touch $outputFile.tmp
+	chmod 600 $outputFile.tmp
+	cat $outputFile | sed -e "s/__000__/$amount/g" > $outputFile.tmp
+	mv $outputFile.tmp $outputFile
+fi
 
 echo
 printf "$CLI_TRANSFER_FINISHED\n" "$outputFile" $number

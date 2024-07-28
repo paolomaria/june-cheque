@@ -19,8 +19,8 @@ Con este CLI se pueden crear June cheques que luego se pueden imprimir en papel 
 
  - Descargue e instale el último paquete en://github.com/paolomaria/june-cheque/releases
  ```
-wget https://github.com/paolomaria/june-cheque/releases/download/release/2.3/june-cheque.2.3.deb
-sudo apt-get install ./june-cheque.2.3.deb
+wget https://github.com/paolomaria/june-cheque/releases/download/release/2.4/june-cheque.2.4.deb
+sudo apt-get install ./june-cheque.2.4.deb
  ```
  
  - Instale silkaj:
@@ -42,9 +42,6 @@ Si quiere crear 10 cheques de 5 June cada uno, llame:
 ```
 june-cheque-create -n 10 -a 5
 ```
-
-Actualmente. los cheques están disponibles en francés, inglés y español.
-
 
 ## Ideas
 

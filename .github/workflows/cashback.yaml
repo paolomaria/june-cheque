@@ -6,7 +6,7 @@ on:
 jobs:
   do_cashback:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
 
     strategy:
       fail-fast: false
@@ -41,6 +41,7 @@ jobs:
       run: |
         cd june-cheque
         ARTIFACT_NAME=script-checks-${{ matrix.cheque_language }}-${{ matrix.cli_language }} httest htt/cashBackCheques.htt > httest.log
+        bash htt/cashBackCheques.sh
       env:
         GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}
@@ -49,6 +50,7 @@ jobs:
       run: |
         cd june-cheque
         ARTIFACT_NAME=pkg-checks-${{ matrix.cheque_language }}-${{ matrix.cli_language }} httest htt/cashBackCheques.htt >> httest.log
+        bash htt/cashBackCheques.sh
       env:
         GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         CHECKFILE_PASSKEY: ${{ secrets.CHECKFILE_PASSKEY }}

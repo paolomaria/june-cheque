@@ -1,5 +1,5 @@
-#ARTIFACT_NAME=pkg-checks-en-en
-#ARTIFACT_NAME=script-checks-fr-fr
+#SET ARTIFACT_NAME=pkg-checks-en-en
+#SET ARTIFACT_NAME=script-checks-fr-fr
 CLIENT
 
 	_REQ api.github.com SSL:443
@@ -35,22 +35,8 @@ CLIENT
 		
 		_EXEC cd /tmp/artifact_$INDEX; unzip -o dummy.zip
 		
-		_MATCH exec "[^:]*: (.*)" SECRET_IDENTIFIER
-		_EXEC cat /tmp/artifact_$INDEX/*.enc | openssl enc -d -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY | tail -n+3 | head -1
-
-		_MATCH exec "[^:]*: (.*)" SECRET_PW
-		_EXEC cat /tmp/artifact_$INDEX/*.enc | openssl enc -d -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY | tail -n+4 | head -1
-
-		_EXEC python3 save_and_load_private_key_file_pubsec.py $SECRET_IDENTIFIER $SECRET_PW /tmp/artifact_$INDEX/authfile
+		_EXEC cat /tmp/artifact_$INDEX/*.enc | openssl enc -d -aes256 -pbkdf2 -k $CHECKFILE_PASSKEY > /tmp/cheque_$INDEX.txt
 		
-		_MATCH exec "(.*)" BALANCE
-		_EXEC jaklis -k /tmp/artifact_$INDEX/authfile balance
-		
-		_IF "$BALANCE" MATCH "^[1-9]"
-			_EXEC jaklis -k /tmp/artifact_$INDEX/authfile pay -a $BALANCE -p 7a3f363wyA1rLgiYGiB796xrubjp9c8WvuB3y8oRR1PD -c "cashback"
-		_ELSE
-			_EXEC echo "NO TRANSFER"
-		_END
 		
 	_END
 	
