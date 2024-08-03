@@ -143,6 +143,7 @@ jobs:
 
     - name: install python stuff
       run: |
+        pip3 install duniterpy
         pip3 install silkaj
 
     - name: install jaklis
