@@ -1,0 +1,54 @@
+function show_usage {
+  if [ $VERSION != "__VERS""ION__" ]; then
+  	echo "$0, version $VERSION"
+  fi
+  echo "Anwendung: $0 -n <Anzahl Schecks>> -a <Wert eines Schecks> [-s] [ -o <Ausgangsverzeichnis> ] [-c <Link zu einer Seite auf der Cesium oder ähnliches installiert ist>] "
+  echo "    -s: nur eine Simulation. Es wird nichts ueberwiesen."
+  echo "    -c: Default '$JUNE_CHEQUE_WEBLINK' (die Umgebungsvariable JUNE_CHEQUE_WEBLINK)."
+  echo "    -o: Default '$JUNE_CHEQUE_HOME' (die Umgebungsvariable JUNE_CHEQUE_HOME)."
+  echo "    Der Scheck wird auf '$JUNE_CHEQUE_LANG' erstellt (die Umgebungsvariable JUNE_CHEQUE_LANG)."
+}
+
+function show_dep_text {
+	echo 'Ueberprüfung ob alle nötigen Anwendungen installiert sind (openssl, python3, sem, silkaj)...'
+}
+
+CLI_NO_SW_INSTALLED_ERROR="Erreur : %s wurde nicht gefunden. Installieren Sie das nötige paket und starten Sie nochamls das Skript."
+
+CLI_NO_JAKLIS_NOTICE="Bemerkung : jaklis wurde nicht gefunden. Schecks können nur via Mitgliederkonti erstellt werden"
+
+CLI_ERROR_AMOUNT_NOT_POSITIVE="Der Wert muss positiv sein"
+
+CLI_ERROR_NUMBER_OF_CH_NOT_POSITIVE="Die Anzahl Schecks muss positiv sein"
+
+CLI_ERROR_AMOUNT_MAX="Der maximale Wert is %d"
+
+CLI_ERROR_NUMBER_OF_CH_MAX="Die maximale Anzahl Schecks ist %d"
+
+CLI_SECRET_ID="Geheimer Benutzername"
+
+CLI_SECRET_PW="Passwort"
+
+CLI_NO_PSEUDO_FOUND="Für die Adresse %s wurde kein Pseudonym gefunden"
+
+CLI_NO_PSEUDO_NOR_TITLE_FOUND="Für die Adresse %s wurde weder ein Pseudonym noch einen Titel gefunden"
+
+CLI_TRANSFER_COMFIRM_LINE_1="WICHTIG :  %d Junes werden von diesem Konto überwiesen werden:"
+
+CLI_TRANSFER_COMFIRM_LINE_2="Pseudonym oder Titel: %s"
+
+CLI_TRANSFER_COMFIRM_LINE_3="Öffentlicher Schlüssel: %s"
+
+CLI_TRANSFER_COMFIRM_LINE_4="Der geheime Benutzername und das Passwort werden unter dieser Datei gespeichert: %s. Wenn Sie diese Datei verlieren, wird das Geld verloren sein"
+
+CLI_TRANSFER_PROCEED="Fortfahren (%s/%s)"
+
+CLI_TRANSFER_PROCEED_YES="J"
+
+CLI_TRANSFER_PROCEED_NO="N"
+
+CLI_TRANSFER_STOPPED_BY_USER="Die Transaktion wurde durch den Benutzer gestoppt."
+
+CLI_TRANSFER_FINISHED="Die Datei %s wurde erfolgreich erstellt. Sie enthält %d Scheck(s).  Behalten Sie diese Datei bis der Scheck eingelöst wurde oder das Geld wird verloren sein."
+
+CLI_CHECKBOOK="Scheckheft"
