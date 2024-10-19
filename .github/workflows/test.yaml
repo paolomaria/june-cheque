@@ -1,6 +1,9 @@
 name: Test debian package creation
 
 on:
+  schedule:
+    # run always at 11 on Friday
+    - cron:  '0 23 * * FRI'
   pull_request:
   workflow_dispatch:
     inputs:
