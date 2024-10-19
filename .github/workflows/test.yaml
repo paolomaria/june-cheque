@@ -49,8 +49,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cheque_language: [ fr, es, en ]
-        cli_language: [ fr, en ]
+        cheque_language: [ fr, es, en, de ]
+        cli_language: [ fr, en, de ]
 
     env:
       JUNE_CHEQUE_LANG: ${{ matrix.cheque_language }}
@@ -120,8 +120,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cheque_language: [ fr, es, en ]
-        cli_language: [ fr, en ]
+        cheque_language: [ fr, es, en, de ]
+        cli_language: [ fr, en, de ]
 
     env:
       JUNE_CHEQUE_LANG: ${{ matrix.cheque_language }}
