@@ -147,7 +147,7 @@ jobs:
 
     - name: install jaklis
       run: |
-        git clone https://git.p2p.legal/axiom-team/jaklis.git
+        git clone https://github.com/paolomaria/jaklis.git
         cd jaklis
         bash setup.sh
 
