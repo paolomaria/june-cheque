@@ -28,7 +28,7 @@ sudo apt-get install ./june-cheque.2.4.deb
  ```
   - installez jaklis (seulement si vous voulez créer des chèques à partir de comptes non-membres)
 ```
-git clone https://git.p2p.legal/axiom-team/jaklis.git
+git clone https://github.com/paolomaria/jaklis.git
 cd jaklis
 bash setup.sh
 ```
