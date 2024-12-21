@@ -25,6 +25,7 @@ sudo apt-get install ./june-cheque.2.5.deb
  - installez silkaj:
  ```
  pip3 install silkaj
+ pip3 install aiohttp
  ```
   - installez jaklis (seulement si vous voulez créer des chèques à partir de comptes non-membres)
 ```

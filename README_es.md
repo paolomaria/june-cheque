@@ -26,6 +26,7 @@ sudo apt-get install ./june-cheque.2.5.deb
  - Instale silkaj:
  ```
  pip3 install silkaj
+ pip3 install aiohttp
  ```
   - Instale jaklis
 ```
